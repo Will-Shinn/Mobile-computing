@@ -2,16 +2,13 @@ package com.mobile.daryldaryl.mobile_computing;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.microsoft.projectoxford.vision.VisionServiceClient;
@@ -22,14 +19,12 @@ import com.microsoft.projectoxford.vision.contract.OCR;
 import com.microsoft.projectoxford.vision.contract.Region;
 import com.microsoft.projectoxford.vision.contract.Word;
 import com.microsoft.projectoxford.vision.rest.VisionServiceException;
-import com.mobile.daryldaryl.mobile_computing.models.RecognitionWord;
 import com.mobile.daryldaryl.mobile_computing.tools.ImageHelper;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static android.R.attr.maxHeight;
 import static android.R.attr.maxWidth;
@@ -60,7 +55,6 @@ public class RecognitionActivity extends AppCompatActivity {
         mImageUri = intent.getParcelableExtra("BitmapUri");
 
         UCrop.Options options = new UCrop.Options();
-        options.setToolbarColor(Color.BLUE);
         options.setFreeStyleCropEnabled(true);
 
         UCrop.of(mImageUri, mImageUri)
