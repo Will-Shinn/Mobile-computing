@@ -161,7 +161,7 @@ public class MapActivity extends AppCompatActivity
                         .addOnSuccessListener(MapActivity.this, new OnSuccessListener<Location>() {
                             @Override
                             public void onSuccess(Location location) {
-                                // Got last known location. In some rare situations this can be null.
+
                                 if (location != null) {
                                     currentLocation = location;
 
@@ -226,7 +226,7 @@ public class MapActivity extends AppCompatActivity
                 102);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
-            // Save the photo taken to a temporary file.
+
             File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
             try {
                 mFilePhotoTaken = File.createTempFile(
@@ -235,8 +235,7 @@ public class MapActivity extends AppCompatActivity
                         storageDir      /* directory */
                 );
 
-                // Create the File where the photo should go
-                // Continue only if the File was successfully created
+
                 if (mFilePhotoTaken != null) {
                     mUriPhotoTaken = FileProvider.getUriForFile(this,
                             "com.mobile.daryldaryl.mobile_computing.fileprovider",
@@ -264,8 +263,8 @@ public class MapActivity extends AppCompatActivity
 
                     mImageUri = Uri.fromFile(mFilePhotoTaken);
 
-
                     Intent intent = new Intent(MapActivity.this, RecognitionActivity.class);
+
                     intent.putExtra("BitmapUri", mImageUri);
 
                     startActivity(intent);
@@ -317,12 +316,7 @@ public class MapActivity extends AppCompatActivity
         mMap.setMyLocationEnabled(true);
         mMap.setOnPoiClickListener(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
-//        LatLng sydney = new LatLng(-33.852, 151.211);
-//        googleMap.addMarker(new MarkerOptions().position(sydney)
-//                .title("Marker in Sydney"));
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             ActivityCompat.requestPermissions(MapActivity.this, new String[]{
@@ -335,7 +329,7 @@ public class MapActivity extends AppCompatActivity
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
+
                         if (location != null) {
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
                         }
@@ -361,7 +355,7 @@ public class MapActivity extends AppCompatActivity
                 .data(list)
                 .gradient(gradient)
                 .build();
-        // Add a tile overlay to the map, using the heat map tile provider.
+
         mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
 //        mProvider.setOpacity(0.7);
 //        mOverlay.clearTileCache();

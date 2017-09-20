@@ -24,11 +24,15 @@ import com.microsoft.projectoxford.vision.contract.Word;
 import com.microsoft.projectoxford.vision.rest.VisionServiceException;
 import com.mobile.daryldaryl.mobile_computing.models.RecognitionWord;
 import com.mobile.daryldaryl.mobile_computing.tools.ImageHelper;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static android.R.attr.maxHeight;
+import static android.R.attr.maxWidth;
 
 public class RecognitionActivity extends AppCompatActivity {
 
@@ -55,20 +59,40 @@ public class RecognitionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mImageUri = intent.getParcelableExtra("BitmapUri");
 
-        bitmap = ImageHelper.loadSizeLimitedBitmapFromUri(
-                mImageUri, getContentResolver());
+        UCrop.Options options = new UCrop.Options();
+        options.setToolbarColor(Color.BLUE);
+        options.setFreeStyleCropEnabled(true);
 
-        if (bitmap != null) {
-            // Show the image on screen.
-            imageView = (ImageView) findViewById(R.id.selectedImage);
-            imageView.setImageBitmap(bitmap);
+        UCrop.of(mImageUri, mImageUri)
+//                .withAspectRatio(16, 9)
+                .withOptions(options)
+                .withMaxResultSize(maxWidth, maxHeight)
+                .start(this);
 
-            // Add detection log.
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            final Uri resultUri = UCrop.getOutput(data);
+            bitmap = ImageHelper.loadSizeLimitedBitmapFromUri(
+                    resultUri, getContentResolver());
+
+            if (bitmap != null) {
+                // Show the image on screen.
+                imageView = (ImageView) findViewById(R.id.selectedImage);
+                imageView.setImageBitmap(bitmap);
+
+                // Add detection log.
 
 
-            doRecognize();
-        } else {
-            editText.setText("error");
+                doRecognize();
+            } else {
+                editText.setText("error");
+            }
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            final Throwable cropError = UCrop.getError(data);
         }
     }
 

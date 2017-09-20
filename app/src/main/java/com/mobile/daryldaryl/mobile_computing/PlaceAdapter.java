@@ -53,7 +53,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private FusedLocationProviderClient mFusedLocationClient;
     public RequestQueue queue;
     private Activity activity;
-    private DatabaseReference mDatabase;
     private String userId;
 
 
@@ -103,33 +102,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 public void onClick(View view) {
                     dialog.dismiss();
 
-                    mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
-                            new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    // Get user value
-                                    User user = dataSnapshot.getValue(User.class);
-
-                                    // [START_EXCLUDE]
-                                    if (user == null) {
-                                        // User is null, error out
-                                        Log.e("adapter", "User " + userId + " is unexpectedly null");
-
-                                    } else {
-                                        // Write new post
-                                        getTime(userId, user.username, place);
-                                    }
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.w("adapter", "getUser:onCancelled", databaseError.toException());
-                                    // [START_EXCLUDE]
-//                                        setEditingEnabled(true);
-                                    // [END_EXCLUDE]
-                                }
-                            });
 
                     Toast.makeText(view.getContext(), place.getName(), Toast.LENGTH_SHORT).show();
 
@@ -155,32 +127,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                     // Got last known location. In some rare situations this can be null.
                                     if (location != null) {
                                         final Place place = new Place("customized place", location.getLatitude(), location.getLongitude(), "customized place");
-
-                                        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
-                                                new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        // Get user value
-                                                        User user = dataSnapshot.getValue(User.class);
-
-                                                        // [START_EXCLUDE]
-                                                        if (user == null) {
-                                                            // User is null, error out
-                                                            Log.e("adapter", "User " + userId + " is unexpectedly null");
-
-                                                        } else {
-                                                            // Write new post
-
-                                                            getTime(userId, user.username, place);
-                                                        }
-
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-                                                        Log.w("adapter", "getUser:onCancelled", databaseError.toException());
-                                                    }
-                                                });
 
                                         Toast.makeText(context, "current location ", Toast.LENGTH_SHORT).show();
 
@@ -219,17 +165,10 @@ public class PlaceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
     private void Checkin(String userId, String username, Place place, String time) {
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
-        String key = mDatabase.child("check-in").push().getKey();
+
         Checkin checkin = new Checkin(userId, username, place, time);
         Map<String, Object> postValues = checkin.toMap();
 
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/check-in/" + key, postValues);
-        childUpdates.put("/user-check-in/" + userId + "/" + key, postValues);
-
-        mDatabase.updateChildren(childUpdates);
     }
 
     @Override
