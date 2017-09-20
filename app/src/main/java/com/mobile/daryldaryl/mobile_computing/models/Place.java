@@ -1,9 +1,6 @@
 package com.mobile.daryldaryl.mobile_computing.models;
 
-import com.google.firebase.database.IgnoreExtraProperties;
 
-// [START blog_user_class]
-@IgnoreExtraProperties
 public class Place {
 
     private String name;
@@ -12,7 +9,7 @@ public class Place {
     private String vicinity;
 
     public Place() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+
     }
 
     public Place(String name, double lat, double lng, String vicinity) {
@@ -59,4 +56,3 @@ public class Place {
         this.vicinity = vicinity;
     }
 }
-// [END blog_user_class]

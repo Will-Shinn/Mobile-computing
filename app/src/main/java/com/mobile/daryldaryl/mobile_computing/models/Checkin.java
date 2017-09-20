@@ -1,13 +1,9 @@
 package com.mobile.daryldaryl.mobile_computing.models;
 
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
-// [START blog_user_class]
-@IgnoreExtraProperties
 public class Checkin {
 
     private String userId;
@@ -16,7 +12,7 @@ public class Checkin {
     private String time;
 
     public Checkin() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+
     }
 
     public Checkin(String userId, String username, Place place,String time) {
@@ -58,7 +54,6 @@ public class Checkin {
         this.time = time;
     }
 
-    @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("userId", userId);
@@ -69,4 +64,3 @@ public class Checkin {
         return result;
     }
 }
-// [END blog_user_class]
