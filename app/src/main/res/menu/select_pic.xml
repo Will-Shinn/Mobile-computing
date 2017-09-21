@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/profile"
-        android:icon="@drawable/ic_menu_camera"
-        android:title="profile" />
+        android:id="@+id/camera"
+        android:title="Camera" />
     <item
-        android:id="@+id/my_checkin"
-        android:icon="@drawable/ic_menu_gallery"
-        android:title="My Check-in" />
+        android:id="@+id/album"
+        android:title="Choose from Album" />
 </menu>

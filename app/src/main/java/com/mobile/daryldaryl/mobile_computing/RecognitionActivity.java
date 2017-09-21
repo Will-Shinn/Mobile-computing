@@ -1,10 +1,14 @@
 package com.mobile.daryldaryl.mobile_computing;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
@@ -24,6 +28,7 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import static android.R.attr.maxHeight;
@@ -53,11 +58,12 @@ public class RecognitionActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mImageUri = intent.getParcelableExtra("BitmapUri");
+        Log.i("uri", mImageUri + "");
 
         UCrop.Options options = new UCrop.Options();
         options.setFreeStyleCropEnabled(true);
 
-        UCrop.of(mImageUri, mImageUri)
+        UCrop.of(mImageUri, Uri.fromFile(new File(getCacheDir(), "tmp")))
 //                .withAspectRatio(16, 9)
                 .withOptions(options)
                 .withMaxResultSize(maxWidth, maxHeight)
@@ -68,6 +74,8 @@ public class RecognitionActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("uri", resultCode + "  " + requestCode);
+
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
             bitmap = ImageHelper.loadSizeLimitedBitmapFromUri(
@@ -87,6 +95,7 @@ public class RecognitionActivity extends AppCompatActivity {
             }
         } else if (resultCode == UCrop.RESULT_ERROR) {
             final Throwable cropError = UCrop.getError(data);
+            Log.i("uri", "wrongggg");
         }
     }
 

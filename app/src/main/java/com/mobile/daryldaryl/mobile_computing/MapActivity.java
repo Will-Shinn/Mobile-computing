@@ -29,9 +29,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,9 +75,10 @@ import java.util.List;
  */
 
 public class MapActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnPoiClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnPoiClickListener, PopupMenu.OnMenuItemClickListener {
 
     private static final int REQUEST_TAKE_PHOTO = 0;
+    private static final int REQUEST_SELECT_IMAGE_IN_ALBUM = 1;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -97,6 +101,7 @@ public class MapActivity extends AppCompatActivity
 
     private TextView username;
     private TextView useremail;
+    private RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,6 +115,8 @@ public class MapActivity extends AppCompatActivity
         String userId = "001";
         list = new ArrayList<>();
         list.add(new LatLng(0, 0));
+
+        relativeLayout = (RelativeLayout) findViewById(R.id.map_layout);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -214,19 +221,21 @@ public class MapActivity extends AppCompatActivity
             @Override
             public boolean onLongClick(View view) {
                 //-37.820592,144.942762
-//                PopupMenu popup = new PopupMenu(MapActivity.this, view, Gravity.BOTTOM);
-//                popup.getMenuInflater()
-//                        .inflate(R.menu.select_pic, popup.getMenu());
-//
-//                popup.show();
+                PopupMenu popup = new PopupMenu(MapActivity.this, view, Gravity.CENTER);
+                popup.getMenuInflater()
+                        .inflate(R.menu.select_pic, popup.getMenu());
 
-                takePhoto(view);
+                popup.setOnMenuItemClickListener(MapActivity.this);
+
+                popup.show();
+
+//                takePhoto();
                 return false;
             }
         });
     }
 
-    public void takePhoto(View view) {
+    public void takePhoto() {
         ActivityCompat.requestPermissions(MapActivity.this, new String[]{
                         Manifest.permission.CAMERA},
                 102);
@@ -258,6 +267,14 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
+    public void selectImageInAlbum() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("AnalyzeActivity", "onActivityResult");
@@ -276,6 +293,22 @@ public class MapActivity extends AppCompatActivity
                     startActivity(intent);
 
                 }
+                break;
+            case REQUEST_SELECT_IMAGE_IN_ALBUM:
+                if (resultCode == RESULT_OK) {
+                    Uri imageUri;
+                    if (data == null || data.getData() == null) {
+                        imageUri = mUriPhotoTaken;
+                    } else {
+                        imageUri = data.getData();
+                    }
+                    Intent intent = new Intent(MapActivity.this, RecognitionActivity.class);
+
+                    intent.putExtra("BitmapUri", imageUri);
+
+                    startActivity(intent);
+                }
+
                 break;
             default:
                 break;
@@ -366,4 +399,27 @@ public class MapActivity extends AppCompatActivity
 //        mProvider.setOpacity(0.7);
 //        mOverlay.clearTileCache();
     }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        Log.i("menu", item + " " + item.getItemId());
+        switch (item.getItemId()) {
+            case R.id.camera:
+                takePhoto();
+                break;
+            case R.id.album:
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+                                android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                        103);
+            }
+
+                selectImageInAlbum();
+                break;
+        }
+        return false;
+    }
+
+
 }
