@@ -214,13 +214,13 @@ public class MapActivity extends AppCompatActivity
             @Override
             public boolean onLongClick(View view) {
                 //-37.820592,144.942762
-                PopupMenu popup = new PopupMenu(MapActivity.this, view, Gravity.BOTTOM);
-                popup.getMenuInflater()
-                        .inflate(R.menu.select_pic, popup.getMenu());
-                
-                popup.show();
+//                PopupMenu popup = new PopupMenu(MapActivity.this, view, Gravity.BOTTOM);
+//                popup.getMenuInflater()
+//                        .inflate(R.menu.select_pic, popup.getMenu());
+//
+//                popup.show();
 
-//                takePhoto(view);
+                takePhoto(view);
                 return false;
             }
         });
