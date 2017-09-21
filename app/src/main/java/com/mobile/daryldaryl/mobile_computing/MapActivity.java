@@ -24,9 +24,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -212,9 +214,13 @@ public class MapActivity extends AppCompatActivity
             @Override
             public boolean onLongClick(View view) {
                 //-37.820592,144.942762
+                PopupMenu popup = new PopupMenu(MapActivity.this, view, Gravity.BOTTOM);
+                popup.getMenuInflater()
+                        .inflate(R.menu.select_pic, popup.getMenu());
+                
+                popup.show();
 
-
-                takePhoto(view);
+//                takePhoto(view);
                 return false;
             }
         });
