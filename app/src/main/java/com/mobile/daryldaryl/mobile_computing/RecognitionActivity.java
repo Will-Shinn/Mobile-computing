@@ -168,7 +168,6 @@ public class RecognitionActivity extends AppCompatActivity {
 
                 editText.setText(result);
             }
-//            mButtonSelectImage.setEnabled(true);
         }
     }
 }
