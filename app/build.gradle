@@ -36,3 +36,4 @@ dependencies {
     compile 'com.yalantis:ucrop:2.2.0-native'
     testCompile 'junit:junit:4.12'
 }
+apply plugin: 'com.google.gms.google-services'
