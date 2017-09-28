@@ -414,6 +414,8 @@ public class MapActivity extends AppCompatActivity
 
                             mData.clear();
                             mData.add(null);
+                            dialog.show();
+
                             String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude() + "&radius=300&key=AIzaSyAeMJIpr7CVFQ7hPXnlr-p80bEhNcg5VIs";
                             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
 
