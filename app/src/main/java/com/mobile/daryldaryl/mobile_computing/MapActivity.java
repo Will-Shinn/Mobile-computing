@@ -75,7 +75,7 @@ import java.util.List;
  */
 
 public class MapActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnPoiClickListener, PopupMenu.OnMenuItemClickListener {
+        implements View.OnClickListener, View.OnLongClickListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnPoiClickListener, PopupMenu.OnMenuItemClickListener {
 
     private static final int REQUEST_TAKE_PHOTO = 0;
     private static final int REQUEST_SELECT_IMAGE_IN_ALBUM = 1;
@@ -102,6 +102,9 @@ public class MapActivity extends AppCompatActivity
     private TextView username;
     private TextView useremail;
     private RelativeLayout relativeLayout;
+
+    FloatingActionButton fab;
+    Dialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -140,7 +143,7 @@ public class MapActivity extends AppCompatActivity
 
         mData = new ArrayList<>();
 
-        final Dialog dialog = new Dialog(MapActivity.this);
+        dialog = new Dialog(MapActivity.this);
         dialog.setContentView(R.layout.check_in);
         recyclerview = dialog.findViewById(R.id.grid_recycler);
         mLayoutManager = new LinearLayoutManager(this, null, LinearLayoutManager.VERTICAL, 0);
@@ -151,88 +154,56 @@ public class MapActivity extends AppCompatActivity
         recyclerview.addItemDecoration(dividerItemDecoration);
         mAdapter.notifyDataSetChanged();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(this);
 
 
-                if (ActivityCompat.checkSelfPermission(MapActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(MapActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        fab.setOnLongClickListener(this);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 101: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    fab.setOnClickListener(this);
+
+                } else {
+                    fab.setOnClickListener(this);
+                }
+                return;
+            }
+            case 102: {
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     ActivityCompat.requestPermissions(MapActivity.this, new String[]{
                                     android.Manifest.permission.ACCESS_FINE_LOCATION,
                                     android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                            101);
+                            102);
                     return;
                 }
+                mMap.setMyLocationEnabled(true);
+                mMap.setOnPoiClickListener(this);
+                mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
                 mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(MapActivity.this, new OnSuccessListener<Location>() {
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                             @Override
                             public void onSuccess(Location location) {
 
                                 if (location != null) {
-                                    currentLocation = location;
-
-                                    mData.clear();
-                                    mData.add(null);
-                                    String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude() + "&radius=300&key=AIzaSyAeMJIpr7CVFQ7hPXnlr-p80bEhNcg5VIs";
-                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
-
-                                        @Override
-                                        public void onResponse(JSONObject response) {
-                                            try {
-                                                JSONArray jsonArray = (JSONArray) response.get("results");
-                                                for (int i = 0; i < jsonArray.length(); i++) {
-                                                    JSONObject place = (JSONObject) jsonArray.get(i);
-                                                    JSONObject geo = (JSONObject) place.get("geometry");
-                                                    mData.add(new Place(place.get("name").toString(),
-                                                            Double.parseDouble(((JSONObject) geo.get("location")).get("lat").toString()),
-                                                            Double.parseDouble(((JSONObject) geo.get("location")).get("lng").toString()),
-                                                            place.get("vicinity").toString()));
-                                                }
-                                                mAdapter.notifyDataSetChanged();
-                                                dialog.show();
-
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-                                    }, new Response.ErrorListener() {
-
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            // TODO Auto-generated method stub
-                                            Log.i("map", error.toString());
-                                        }
-                                    });
-                                    queue.add(jsonObjectRequest);
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
                                 }
                             }
                         });
 
-
+                addHeatMap();
             }
-        });
-        fab.setOnLongClickListener(new View.OnLongClickListener()
-
-        {
-            @Override
-            public boolean onLongClick(View view) {
-                //-37.820592,144.942762
-                PopupMenu popup = new PopupMenu(MapActivity.this, view, Gravity.CENTER);
-                popup.getMenuInflater()
-                        .inflate(R.menu.select_pic, popup.getMenu());
-
-                popup.setOnMenuItemClickListener(MapActivity.this);
-
-                popup.show();
-
-//                takePhoto();
-                return false;
-            }
-        });
+        }
     }
 
     public void takePhoto() {
@@ -352,18 +323,20 @@ public class MapActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-        mMap.setOnPoiClickListener(this);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             ActivityCompat.requestPermissions(MapActivity.this, new String[]{
                             android.Manifest.permission.ACCESS_FINE_LOCATION,
                             android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                    101);
+                    102);
             return;
         }
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnPoiClickListener(this);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -409,11 +382,11 @@ public class MapActivity extends AppCompatActivity
                 break;
             case R.id.album:
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                ActivityCompat.requestPermissions(MapActivity.this, new String[]{
-                                android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                        103);
-            }
+                    // TODO: Consider calling
+                    ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+                                    android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                            103);
+                }
 
                 selectImageInAlbum();
                 break;
@@ -422,4 +395,76 @@ public class MapActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onClick(View view) {
+        if (ActivityCompat.checkSelfPermission(MapActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(MapActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    101);
+            return;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(MapActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+
+                        if (location != null) {
+                            currentLocation = location;
+
+                            mData.clear();
+                            mData.add(null);
+                            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude() + "&radius=300&key=AIzaSyAeMJIpr7CVFQ7hPXnlr-p80bEhNcg5VIs";
+                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
+                                        JSONArray jsonArray = (JSONArray) response.get("results");
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            JSONObject place = (JSONObject) jsonArray.get(i);
+                                            JSONObject geo = (JSONObject) place.get("geometry");
+                                            mData.add(new Place(place.get("name").toString(),
+                                                    Double.parseDouble(((JSONObject) geo.get("location")).get("lat").toString()),
+                                                    Double.parseDouble(((JSONObject) geo.get("location")).get("lng").toString()),
+                                                    place.get("vicinity").toString()));
+                                        }
+                                        mAdapter.notifyDataSetChanged();
+                                        dialog.show();
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            }, new Response.ErrorListener() {
+
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    // TODO Auto-generated method stub
+                                    Log.i("map", error.toString());
+                                }
+                            });
+                            queue.add(jsonObjectRequest);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        //-37.820592,144.942762
+        PopupMenu popup = new PopupMenu(MapActivity.this, view, Gravity.CENTER);
+        popup.getMenuInflater()
+                .inflate(R.menu.select_pic, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(MapActivity.this);
+
+        popup.show();
+
+//                takePhoto();
+        return false;
+    }
 }
