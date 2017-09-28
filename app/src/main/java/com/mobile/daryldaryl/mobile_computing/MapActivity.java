@@ -167,49 +167,41 @@ public class MapActivity extends AppCompatActivity
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 101: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    fab.setOnClickListener(this);
-
-                } else {
-                    fab.setOnClickListener(this);
-                }
+                fab.setOnClickListener(this);
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    fab.setOnClickListener(this);
+//
+//                } else {
+//                    fab.setOnClickListener(this);
+//                }
                 return;
             }
             case 102: {
-                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    ActivityCompat.requestPermissions(MapActivity.this, new String[]{
-                                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                    android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                            102);
-                    return;
-                }
-                mMap.setMyLocationEnabled(true);
-                mMap.setOnPoiClickListener(this);
-                mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-
-                                if (location != null) {
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
-                                }
-                            }
-                        });
-
-                addHeatMap();
+                initMap();
+                return;
+            }
+            case 103: {
+                takePhoto();
+                return;
+            }
+            case 104: {
+                selectImageInAlbum();
+                return;
             }
         }
     }
 
     public void takePhoto() {
-        ActivityCompat.requestPermissions(MapActivity.this, new String[]{
-                        Manifest.permission.CAMERA},
-                102);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+                            Manifest.permission.CAMERA},
+                    103);
+            return;
+        }
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
 
@@ -239,6 +231,15 @@ public class MapActivity extends AppCompatActivity
     }
 
     public void selectImageInAlbum() {
+
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+                            android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                    104);
+            return;
+        }
+
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -324,7 +325,11 @@ public class MapActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        initMap();
 
+    }
+
+    private void initMap() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             ActivityCompat.requestPermissions(MapActivity.this, new String[]{
@@ -381,13 +386,6 @@ public class MapActivity extends AppCompatActivity
                 takePhoto();
                 break;
             case R.id.album:
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    ActivityCompat.requestPermissions(MapActivity.this, new String[]{
-                                    android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                            103);
-                }
-
                 selectImageInAlbum();
                 break;
         }

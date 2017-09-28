@@ -233,6 +233,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         mPasswordView.setError(getString(R.string.error_incorrect_password));
                         mPasswordView.requestFocus();
+                        showProgress(false);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -245,6 +246,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // TODO Auto-generated method stub
+                Toast.makeText(LoginActivity.this, "Network issues, please try later.", Toast.LENGTH_LONG).show();
+                showProgress(false);
                 Log.i("error", error.toString());
             }
         });
@@ -269,7 +272,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // TODO Auto-generated method stub
-                Toast.makeText(LoginActivity.this, "network error", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Network issues, please try later.", Toast.LENGTH_LONG).show();
+                showProgress(false);
             }
         }) {
             @Override
