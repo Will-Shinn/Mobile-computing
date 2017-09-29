@@ -196,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-        String url = ServerInfo.url + "/naive_login";
+        String url = ServerInfo.url + "/login";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
 
             @Override
