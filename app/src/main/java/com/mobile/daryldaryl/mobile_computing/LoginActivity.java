@@ -41,7 +41,6 @@ import java.util.Map;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
-//helloworldddd
 
     // UI references.
     private AutoCompleteTextView mUsernameView;
