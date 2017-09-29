@@ -91,11 +91,11 @@ public class MainActivity extends AppCompatActivity
     private GoogleCloudMessaging gcm;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-    private GoogleMap mMap;
+    static GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-    private ArrayList<LatLng> list;
-    private HeatmapTileProvider mProvider;
-    private TileOverlay mOverlay;
+    static ArrayList<LatLng> list;
+    static HeatmapTileProvider mProvider;
+    static TileOverlay mOverlay;
     public RequestQueue queue;
     private RecyclerView recyclerview;
     private LinearLayoutManager mLayoutManager;
@@ -391,6 +391,20 @@ public class MainActivity extends AppCompatActivity
         mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
 //        mProvider.setOpacity(0.7);
 //        mOverlay.clearTileCache();
+    }
+
+    public static void addCheckIn(LatLng point) {
+        list.add(point);
+        mProvider.setData(list);
+        mOverlay.clearTileCache();
+
+
+    }
+
+    public static void removeCheckIn() {
+        list.remove(1);
+        mProvider.setData(list);
+        mOverlay.clearTileCache();
     }
 
     @Override
