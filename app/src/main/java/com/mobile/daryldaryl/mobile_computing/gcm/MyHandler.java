@@ -28,10 +28,11 @@ public class MyHandler extends NotificationsHandler {
     public void onReceive(Context context, Bundle bundle) {
         ctx = context;
         String nhMessage = bundle.getString("message");
-        sendNotification(nhMessage);
+        String type = bundle.getString("type");
+        sendNotification(type + " -- " + nhMessage);
         if (MainActivity.isVisible) {
 //            MainActivity.mainActivity.ToastNotify(nhMessage);
-            Toast.makeText(ctx, nhMessage, Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, type + " -- " +nhMessage, Toast.LENGTH_LONG).show();
 
         }
     }
