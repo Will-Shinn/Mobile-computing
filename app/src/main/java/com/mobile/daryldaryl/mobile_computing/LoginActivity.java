@@ -82,6 +82,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        Button SignIn = (Button) findViewById(R.id.email_sign_in);
+        SignIn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                finish();
+            }
+        });
+
         mLoginFormView = findViewById(R.id.email_login_form);
         mProgressView = findViewById(R.id.login_progress);
 
