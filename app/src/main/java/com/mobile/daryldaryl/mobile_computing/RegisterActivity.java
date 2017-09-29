@@ -44,6 +44,11 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         queue = SingletonQueue.getInstance(this).getRequestQueue();
+        
+        input_username = (EditText) findViewById(R.id.input_name);
+        input_password = (EditText) findViewById(R.id.input_password);
+        input_email = (EditText) findViewById(R.id.input_email);
+
         button = (Button) findViewById(R.id.btn_signup);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,9 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        input_username = (EditText) findViewById(R.id.input_name);
-        input_password = (EditText) findViewById(R.id.input_password);
-        input_email = (EditText) findViewById(R.id.input_email);
+
 
 
     }
