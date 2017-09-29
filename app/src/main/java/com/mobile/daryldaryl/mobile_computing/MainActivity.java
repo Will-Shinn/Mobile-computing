@@ -1,6 +1,5 @@
 package com.mobile.daryldaryl.mobile_computing;
 
-import android.*;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
@@ -29,11 +28,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,11 +50,12 @@ import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.mobile.daryldaryl.mobile_computing.gcm.MyHandler;
+import com.mobile.daryldaryl.mobile_computing.gcm.NotificationSettings;
+import com.mobile.daryldaryl.mobile_computing.gcm.RegistrationIntentService;
 import com.mobile.daryldaryl.mobile_computing.models.Place;
-import com.mobile.daryldaryl.mobile_computing.tools.ImageHelper;
 import com.mobile.daryldaryl.mobile_computing.tools.SingletonQueue;
 
 import org.json.JSONArray;
@@ -70,15 +67,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.gcm.*;
+import com.microsoft.windowsazure.notifications.NotificationsManager;
+
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
+
 /**
  * Created by liboa on 20/09/2017.
  */
 
-public class MapActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, View.OnLongClickListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnPoiClickListener, PopupMenu.OnMenuItemClickListener {
 
     private static final int REQUEST_TAKE_PHOTO = 0;
     private static final int REQUEST_SELECT_IMAGE_IN_ALBUM = 1;
+
+    public static MainActivity mainActivity;
+    public static Boolean isVisible = false;
+    private GoogleCloudMessaging gcm;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -115,6 +126,10 @@ public class MapActivity extends AppCompatActivity
         getSupportActionBar().setTitle("");
 
 
+        mainActivity = this;
+        NotificationsManager.handleNotifications(this, NotificationSettings.SenderId, MyHandler.class);
+        registerWithNotificationHubs();
+
         String userId = "001";
         list = new ArrayList<>();
         list.add(new LatLng(0, 0));
@@ -143,13 +158,13 @@ public class MapActivity extends AppCompatActivity
 
         mData = new ArrayList<>();
 
-        dialog = new Dialog(MapActivity.this);
+        dialog = new Dialog(MainActivity.this);
         dialog.setContentView(R.layout.check_in);
         recyclerview = dialog.findViewById(R.id.grid_recycler);
         mLayoutManager = new LinearLayoutManager(this, null, LinearLayoutManager.VERTICAL, 0);
         recyclerview.setLayoutManager(mLayoutManager);
-        recyclerview.setAdapter(mAdapter = new PlaceAdapter(mData, dialog, MapActivity.this, userId));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MapActivity.this,
+        recyclerview.setAdapter(mAdapter = new PlaceAdapter(mData, dialog, MainActivity.this, userId));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MainActivity.this,
                 mLayoutManager.getOrientation());
         recyclerview.addItemDecoration(dividerItemDecoration);
         mAdapter.notifyDataSetChanged();
@@ -197,7 +212,7 @@ public class MapActivity extends AppCompatActivity
     public void takePhoto() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                             Manifest.permission.CAMERA},
                     103);
             return;
@@ -234,7 +249,7 @@ public class MapActivity extends AppCompatActivity
 
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                             android.Manifest.permission.READ_EXTERNAL_STORAGE},
                     104);
             return;
@@ -258,7 +273,7 @@ public class MapActivity extends AppCompatActivity
 
                     mImageUri = Uri.fromFile(mFilePhotoTaken);
 
-                    Intent intent = new Intent(MapActivity.this, RecognitionActivity.class);
+                    Intent intent = new Intent(MainActivity.this, RecognitionActivity.class);
 
                     intent.putExtra("BitmapUri", mImageUri);
 
@@ -274,7 +289,7 @@ public class MapActivity extends AppCompatActivity
                     } else {
                         imageUri = data.getData();
                     }
-                    Intent intent = new Intent(MapActivity.this, RecognitionActivity.class);
+                    Intent intent = new Intent(MainActivity.this, RecognitionActivity.class);
 
                     intent.putExtra("BitmapUri", imageUri);
 
@@ -295,15 +310,15 @@ public class MapActivity extends AppCompatActivity
         if (id == R.id.profile) {
             // Handle the camera action
         } else if (id == R.id.my_checkin) {
-//            startActivity(new Intent(MapActivity.this, MyCheckinActivity.class));
+//            startActivity(new Intent(MainActivity.this, MyCheckinActivity.class));
         } else if (id == R.id.today) {
-//            startActivity(new Intent(MapActivity.this, OutlineActivity.class));
+//            startActivity(new Intent(MainActivity.this, OutlineActivity.class));
         } else if (id == R.id.my_favourite) {
 
         } else if (id == R.id.settings) {
 
         } else if (id == R.id.log_out) {
-            startActivity(new Intent(MapActivity.this, LoginActivity.class));
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
 
@@ -332,7 +347,7 @@ public class MapActivity extends AppCompatActivity
     private void initMap() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                             android.Manifest.permission.ACCESS_FINE_LOCATION,
                             android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     102);
@@ -392,20 +407,52 @@ public class MapActivity extends AppCompatActivity
         return false;
     }
 
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i("MainActivity", "This device is not supported by Google Play Services.");
+//                ToastNotify("This device is not supported by Google Play Services.");
+                Toast.makeText(this, "This device is not supported by Google Play Services.", Toast.LENGTH_LONG).show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public void registerWithNotificationHubs() {
+        Log.i("MainActivity", " Registering with Notification Hubs");
+
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+    }
 
     @Override
     public void onClick(View view) {
-        if (ActivityCompat.checkSelfPermission(MapActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(MapActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            ActivityCompat.requestPermissions(MapActivity.this, new String[]{
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                             android.Manifest.permission.ACCESS_FINE_LOCATION,
                             android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     101);
             return;
         }
         mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(MapActivity.this, new OnSuccessListener<Location>() {
+                .addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
 
@@ -456,15 +503,50 @@ public class MapActivity extends AppCompatActivity
     @Override
     public boolean onLongClick(View view) {
         //-37.820592,144.942762
-        PopupMenu popup = new PopupMenu(MapActivity.this, view, Gravity.CENTER);
+        PopupMenu popup = new PopupMenu(MainActivity.this, view, Gravity.CENTER);
         popup.getMenuInflater()
                 .inflate(R.menu.select_pic, popup.getMenu());
 
-        popup.setOnMenuItemClickListener(MapActivity.this);
+        popup.setOnMenuItemClickListener(MainActivity.this);
 
         popup.show();
 
 //                takePhoto();
         return false;
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isVisible = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isVisible = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isVisible = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isVisible = false;
+    }
+
+//    public void ToastNotify(final String notificationMessage) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Toast.makeText(MainActivity.this, notificationMessage, Toast.LENGTH_LONG).show();
+//                TextView helloText = (TextView) findViewById(R.id.text_hello);
+//                helloText.setText(notificationMessage);
+//            }
+//        });
+//    }
 }

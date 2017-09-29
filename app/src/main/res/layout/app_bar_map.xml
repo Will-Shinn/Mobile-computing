@@ -5,7 +5,7 @@
     android:id="@+id/map_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mobile.daryldaryl.mobile_computing.MapActivity">
+    tools:context="com.mobile.daryldaryl.mobile_computing.MainActivity">
 
 
     <include layout="@layout/content_map" />
