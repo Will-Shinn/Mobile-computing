@@ -28,6 +28,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mobile.daryldaryl.mobile_computing.tools.ServerInfo;
 import com.mobile.daryldaryl.mobile_computing.tools.SingletonQueue;
 
 import org.json.JSONException;
@@ -195,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-        String url = "http://mobilecompserver.azurewebsites.net/login";
+        String url = ServerInfo.url + "/naive_login";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
 
             @Override
@@ -242,7 +243,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void getUser() {
 
-        String url = "http://mobilecompserver.azurewebsites.net/user";
+        String url = ServerInfo.url + "/user";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
             @Override
