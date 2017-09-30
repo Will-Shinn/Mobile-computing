@@ -3,6 +3,8 @@ package com.mobile.daryldaryl.mobile_computing;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -30,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mobile.daryldaryl.mobile_computing.models.Checkin;
 import com.mobile.daryldaryl.mobile_computing.models.Place;
 import com.mobile.daryldaryl.mobile_computing.models.User;
+import com.mobile.daryldaryl.mobile_computing.tools.ServerInfo;
 import com.mobile.daryldaryl.mobile_computing.tools.SingletonQueue;
 
 import org.json.JSONException;
@@ -97,13 +101,51 @@ public class PlaceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             placeViewHolder.placeName.setText(place.getName());
             placeViewHolder.placeAddress.setText(place.getVicinity());
 
+            final JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("name", place.getName());
+                jsonObject.put("lat", place.getLat());
+                jsonObject.put("lng", place.getLng());
+                jsonObject.put("vicinity", place.getVicinity());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     dialog.dismiss();
+                    String url = ServerInfo.url + "/check_in";
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
 
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.i("LoginActivity", response.toString());
+                            Toast.makeText(activity, "check-in succeed", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Response.ErrorListener() {
 
-                    Toast.makeText(view.getContext(), place.getName(), Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // TODO Auto-generated method stub
+                            Toast.makeText(activity, "Network issues, please try later.", Toast.LENGTH_LONG).show();
+                        }
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            SharedPreferences sharedPref = activity.getApplicationContext().getSharedPreferences(
+                                    "Mobile", Context.MODE_PRIVATE);
+                            String access_token = sharedPref.getString("access_token", "");
+
+                            Map<String, String> headers = new HashMap<>();
+                            headers.put("Accept", "application/json");
+                            headers.put("Authorization", access_token);
+
+                            return headers;
+                        }
+                    };
+                    queue.add(jsonObjectRequest);
+
+//                    Toast.makeText(view.getContext(), place.getName(), Toast.LENGTH_SHORT).show();
 
 
                 }

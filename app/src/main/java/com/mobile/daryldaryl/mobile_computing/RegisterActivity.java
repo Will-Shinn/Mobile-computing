@@ -44,7 +44,6 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         queue = SingletonQueue.getInstance(this).getRequestQueue();
-        
         input_username = (EditText) findViewById(R.id.input_name);
         input_password = (EditText) findViewById(R.id.input_password);
         input_email = (EditText) findViewById(R.id.input_email);
@@ -56,9 +55,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                 JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("username", input_username.getText());
-                    jsonObject.put("password", input_password.getText());
-                    jsonObject.put("email", input_email.getText());
+                    jsonObject.put("username", input_username.getText().toString());
+                    jsonObject.put("password", input_password.getText().toString());
+                    jsonObject.put("email", input_email.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -105,8 +104,6 @@ public class RegisterActivity extends AppCompatActivity {
                 queue.add(jsonObjectRequest);
             }
         });
-
-
 
 
     }
