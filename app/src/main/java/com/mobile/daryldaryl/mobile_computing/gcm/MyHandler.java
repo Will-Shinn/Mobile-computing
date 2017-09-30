@@ -24,6 +24,7 @@ public class MyHandler extends NotificationsHandler {
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
     Context ctx;
+    boolean flag = true;
 
     @Override
     public void onReceive(Context context, Bundle bundle) {
@@ -33,7 +34,14 @@ public class MyHandler extends NotificationsHandler {
         String type = bundle.getString("type");
         switch (type) {
             case "add":
-                MainActivity.addCheckIn(new LatLng(lat, lng));
+                if (flag) {
+                    flag = false;
+                    MainActivity.addCheckIn(new LatLng(lat, lng), MainActivity.mProvider, MainActivity.mOverlay);
+
+                } else {
+                    flag = true;
+                    MainActivity.addCheckIn(new LatLng(lat, lng), MainActivity.mProviderdb, MainActivity.mOverlaydb);
+                }
                 break;
             case "remove":
                 MainActivity.removeCheckIn();

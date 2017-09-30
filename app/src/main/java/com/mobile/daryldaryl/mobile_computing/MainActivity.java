@@ -93,9 +93,11 @@ public class MainActivity extends AppCompatActivity
 
     static GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-    static ArrayList<LatLng> list;
-    static HeatmapTileProvider mProvider;
-    static TileOverlay mOverlay;
+    public static ArrayList<LatLng> list;
+    public static HeatmapTileProvider mProvider;
+    public static HeatmapTileProvider mProviderdb;
+    public static TileOverlay mOverlay;
+    public static TileOverlay mOverlaydb;
     public RequestQueue queue;
     private RecyclerView recyclerview;
     private LinearLayoutManager mLayoutManager;
@@ -132,7 +134,6 @@ public class MainActivity extends AppCompatActivity
 
         String userId = "001";
         list = new ArrayList<>();
-        list.add(new LatLng(0, 0));
 
         relativeLayout = (RelativeLayout) findViewById(R.id.map_layout);
 
@@ -361,39 +362,36 @@ public class MainActivity extends AppCompatActivity
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-
                         if (location != null) {
+                            list.add(new LatLng(location.getLatitude(), location.getLongitude()));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
+                            addHeatMap();
                         }
                     }
                 });
 
-        addHeatMap();
+
     }
 
     private void addHeatMap() {
-        int[] colors = {
-                Color.rgb(102, 225, 0), // green
-                Color.rgb(255, 0, 0)    // red
-        };
 
-        float[] startPoints = {
-                0.2f, 1f
-        };
-
-        Gradient gradient = new Gradient(colors, startPoints);
 
         mProvider = new HeatmapTileProvider.Builder()
                 .data(list)
-                .gradient(gradient)
                 .build();
 
         mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-//        mProvider.setOpacity(0.7);
+
+        mProviderdb = new HeatmapTileProvider.Builder()
+                .data(list)
+                .build();
+
+        mOverlaydb = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProviderdb));
+
 //        mOverlay.clearTileCache();
     }
 
-    public static void addCheckIn(LatLng point) {
+    public static void addCheckIn(LatLng point, HeatmapTileProvider mProvider, TileOverlay mOverlay) {
         list.add(point);
         mProvider.setData(list);
         mOverlay.clearTileCache();
@@ -405,6 +403,8 @@ public class MainActivity extends AppCompatActivity
         list.remove(1);
         mProvider.setData(list);
         mOverlay.clearTileCache();
+        mProviderdb.setData(list);
+        mOverlaydb.clearTileCache();
     }
 
     @Override
