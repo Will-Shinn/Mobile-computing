@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.profile) {
             // Handle the camera action
         } else if (id == R.id.my_checkin) {
-//            startActivity(new Intent(MainActivity.this, MyCheckinActivity.class));
+            startActivity(new Intent(MainActivity.this, MyCheckInActivity.class));
         } else if (id == R.id.today) {
 //            startActivity(new Intent(MainActivity.this, OutlineActivity.class));
         } else if (id == R.id.my_favourite) {

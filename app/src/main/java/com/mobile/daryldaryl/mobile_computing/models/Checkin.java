@@ -8,18 +8,15 @@ public class Checkin {
 
     private String userId;
     private String username;
-    private Place place;
-    private String time;
+    private String name;
+    private double lat;
+    private double lng;
+    private long time;
+    private String vicinity;
+
 
     public Checkin() {
 
-    }
-
-    public Checkin(String userId, String username, Place place,String time) {
-        this.userId = userId;
-        this.username = username;
-        this.place = place;
-        this.time = time;
     }
 
     public String getUserId() {
@@ -38,29 +35,50 @@ public class Checkin {
         this.username = username;
     }
 
-    public Place getPlace() {
-        return place;
+    public String getName() {
+        return name;
     }
 
-    public void setPlace(Place place) {
-        this.place = place;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
+    public String getVicinity() {
+        return vicinity;
+    }
+
+    public void setVicinity(String vicinity) {
+        this.vicinity = vicinity;
     }
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("userId", userId);
         result.put("username", username);
-        result.put("place", place);
-        result.put("time", time);
-
         return result;
     }
 }

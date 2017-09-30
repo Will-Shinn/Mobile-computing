@@ -93,6 +93,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof PlaceViewHolder) {
@@ -180,38 +181,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-
-    private void getTime(final String userId, final String username, final Place place) {
-        String url = "http://api.geonames.org/timezoneJSON?lat=" + place.getLat() + "&lng=" + place.getLng() + "&username=daryldaryl";
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String time = response.get("time").toString();
-                    Checkin(userId, username, place, time);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // TODO Auto-generated method stub
-                Log.i("ii", error.toString());
-            }
-        });
-        queue.add(jsonObjectRequest);
-    }
-
-
-    private void Checkin(String userId, String username, Place place, String time) {
-
-        Checkin checkin = new Checkin(userId, username, place, time);
-        Map<String, Object> postValues = checkin.toMap();
-
-    }
 
     @Override
     public int getItemCount() {
