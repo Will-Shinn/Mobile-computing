@@ -30,6 +30,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,7 +83,7 @@ import android.widget.Toast;
  */
 
 public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener, View.OnLongClickListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnPoiClickListener, PopupMenu.OnMenuItemClickListener {
+        implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnPoiClickListener {
 
     private static final int REQUEST_TAKE_PHOTO = 0;
     private static final int REQUEST_SELECT_IMAGE_IN_ALBUM = 1;
@@ -116,6 +118,11 @@ public class MainActivity extends AppCompatActivity
     private TextView useremail;
     private RelativeLayout relativeLayout;
 
+
+    private Boolean isFabOpen = false;
+    private FloatingActionButton fab1, fab2, fab3;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
+
     FloatingActionButton fab;
     Dialog dialog;
 
@@ -131,6 +138,18 @@ public class MainActivity extends AppCompatActivity
         mainActivity = this;
         NotificationsManager.handleNotifications(this, NotificationSettings.SenderId, MyHandler.class);
         registerWithNotificationHubs();
+
+        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab3 = (FloatingActionButton) findViewById(R.id.fab3);
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
+
+        fab1.setOnClickListener(this);
+        fab2.setOnClickListener(this);
+        fab3.setOnClickListener(this);
 
         String userId = "001";
         list = new ArrayList<>();
@@ -174,7 +193,6 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(this);
 
 
-        fab.setOnLongClickListener(this);
     }
 
 
@@ -183,16 +201,7 @@ public class MainActivity extends AppCompatActivity
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 101: {
-
                 fab.setOnClickListener(this);
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                    fab.setOnClickListener(this);
-//
-//                } else {
-//                    fab.setOnClickListener(this);
-//                }
                 return;
             }
             case 102: {
@@ -260,6 +269,35 @@ public class MainActivity extends AppCompatActivity
         intent.setType("image/*");
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM);
+        }
+    }
+
+    public void animateFAB() {
+
+        if (isFabOpen) {
+
+            fab.startAnimation(rotate_backward);
+            fab1.startAnimation(fab_close);
+            fab2.startAnimation(fab_close);
+            fab3.startAnimation(fab_close);
+            fab1.setClickable(false);
+            fab2.setClickable(false);
+            fab3.setClickable(false);
+            isFabOpen = false;
+            Log.d("Raj", "close");
+
+        } else {
+
+            fab.startAnimation(rotate_forward);
+            fab1.startAnimation(fab_open);
+            fab2.startAnimation(fab_open);
+            fab3.startAnimation(fab_open);
+            fab1.setClickable(true);
+            fab2.setClickable(true);
+            fab3.setClickable(true);
+            isFabOpen = true;
+            Log.d("Raj", "open");
+
         }
     }
 
@@ -407,19 +445,19 @@ public class MainActivity extends AppCompatActivity
         mOverlaydb.clearTileCache();
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        Log.i("menu", item + " " + item.getItemId());
-        switch (item.getItemId()) {
-            case R.id.camera:
-                takePhoto();
-                break;
-            case R.id.album:
-                selectImageInAlbum();
-                break;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onMenuItemClick(MenuItem item) {
+//        Log.i("menu", item + " " + item.getItemId());
+//        switch (item.getItemId()) {
+//            case R.id.camera:
+//                takePhoto();
+//                break;
+//            case R.id.album:
+//                selectImageInAlbum();
+//                break;
+//        }
+//        return false;
+//    }
 
     /**
      * Check the device to make sure it has the Google Play Services APK. If
@@ -456,78 +494,92 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
-                            android.Manifest.permission.ACCESS_FINE_LOCATION,
-                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                    101);
-            return;
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
+        switch (view.getId()) {
+            case R.id.fab:
+                animateFAB();
+                break;
+            case R.id.fab1:
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        || ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                    android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                            101);
+                    return;
+                }
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
 
-                        if (location != null) {
-                            currentLocation = location;
+                                if (location != null) {
+                                    currentLocation = location;
 
-                            mData.clear();
-                            mData.add(null);
-                            dialog.show();
+                                    mData.clear();
+                                    mData.add(null);
+                                    dialog.show();
 
-                            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude() + "&radius=300&key=AIzaSyAeMJIpr7CVFQ7hPXnlr-p80bEhNcg5VIs";
-                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+                                    String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude() + "&radius=300&key=AIzaSyAeMJIpr7CVFQ7hPXnlr-p80bEhNcg5VIs";
+                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
 
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    try {
-                                        JSONArray jsonArray = (JSONArray) response.get("results");
-                                        for (int i = 0; i < jsonArray.length(); i++) {
-                                            JSONObject place = (JSONObject) jsonArray.get(i);
-                                            JSONObject geo = (JSONObject) place.get("geometry");
-                                            mData.add(new Place(place.get("name").toString(),
-                                                    Double.parseDouble(((JSONObject) geo.get("location")).get("lat").toString()),
-                                                    Double.parseDouble(((JSONObject) geo.get("location")).get("lng").toString()),
-                                                    place.get("vicinity").toString()));
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            try {
+                                                JSONArray jsonArray = (JSONArray) response.get("results");
+                                                for (int i = 0; i < jsonArray.length(); i++) {
+                                                    JSONObject place = (JSONObject) jsonArray.get(i);
+                                                    JSONObject geo = (JSONObject) place.get("geometry");
+                                                    mData.add(new Place(place.get("name").toString(),
+                                                            Double.parseDouble(((JSONObject) geo.get("location")).get("lat").toString()),
+                                                            Double.parseDouble(((JSONObject) geo.get("location")).get("lng").toString()),
+                                                            place.get("vicinity").toString()));
+                                                }
+                                                mAdapter.notifyDataSetChanged();
+                                                dialog.show();
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
                                         }
-                                        mAdapter.notifyDataSetChanged();
-                                        dialog.show();
+                                    }, new Response.ErrorListener() {
 
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            // TODO Auto-generated method stub
+                                            Log.i("map", error.toString());
+                                        }
+                                    });
+                                    queue.add(jsonObjectRequest);
                                 }
-                            }, new Response.ErrorListener() {
+                            }
+                        });
+                break;
+            case R.id.fab2:
+                takePhoto();
+                break;
+            case R.id.fab3:
+                selectImageInAlbum();
+                break;
+        }
 
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    // TODO Auto-generated method stub
-                                    Log.i("map", error.toString());
-                                }
-                            });
-                            queue.add(jsonObjectRequest);
-                        }
-                    }
-                });
     }
 
-    @Override
-    public boolean onLongClick(View view) {
-        //-37.820592,144.942762
-        PopupMenu popup = new PopupMenu(MainActivity.this, view, Gravity.CENTER);
-        popup.getMenuInflater()
-                .inflate(R.menu.select_pic, popup.getMenu());
-
-        popup.setOnMenuItemClickListener(MainActivity.this);
-
-        popup.show();
-
-//                takePhoto();
-        return false;
-    }
+//    @Override
+//    public boolean onLongClick(View view) {
+//        //-37.820592,144.942762
+//        PopupMenu popup = new PopupMenu(MainActivity.this, view, Gravity.CENTER);
+//        popup.getMenuInflater()
+//                .inflate(R.menu.select_pic, popup.getMenu());
+//
+//        popup.setOnMenuItemClickListener(MainActivity.this);
+//
+//        popup.show();
+//
+////                takePhoto();
+//        return false;
+//    }
 
     @Override
     protected void onStart() {
@@ -553,14 +605,5 @@ public class MainActivity extends AppCompatActivity
         isVisible = false;
     }
 
-//    public void ToastNotify(final String notificationMessage) {
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Toast.makeText(MainActivity.this, notificationMessage, Toast.LENGTH_LONG).show();
-//                TextView helloText = (TextView) findViewById(R.id.text_hello);
-//                helloText.setText(notificationMessage);
-//            }
-//        });
-//    }
+
 }

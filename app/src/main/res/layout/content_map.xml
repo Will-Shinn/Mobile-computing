@@ -14,7 +14,6 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         tools:context="com.mobile.daryldaryl.mobile_computing.MainActivity" />
 
     <android.support.design.widget.FloatingActionButton
@@ -24,6 +23,44 @@
         android:layout_alignBottom="@id/map"
         android:layout_centerInParent="true"
         android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/ic_menu" />
 
-        app:srcCompat="@drawable/check_in_white" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/map"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_toLeftOf="@+id/fab"
+        android:src="@drawable/check_in_white"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorFAB1"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/fab"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_menu_camera"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorFAB2"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/map"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_toRightOf="@+id/fab"
+        android:src="@drawable/ic_menu_gallery"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorFAB3"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
 </RelativeLayout>

@@ -67,8 +67,6 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ChechkInViewHolder chechkInViewHolder = (ChechkInViewHolder) holder;
             chechkInViewHolder.chechInName.setText(checkin.getName());
             chechkInViewHolder.chechInVicinity.setText(checkin.getVicinity());
-            chechkInViewHolder.chechInLat.setText(checkin.getLat() + "");
-            chechkInViewHolder.chechInLng.setText(checkin.getLng() + "");
             chechkInViewHolder.chechInTime.setText(Utils.parseRecentTime(checkin.getTime()));
 
 
@@ -100,16 +98,12 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private class ChechkInViewHolder extends RecyclerView.ViewHolder {
         public TextView chechInName;
         public TextView chechInVicinity;
-        public TextView chechInLat;
-        public TextView chechInLng;
         public TextView chechInTime;
 
         public ChechkInViewHolder(View itemView) {
             super(itemView);
             chechInName = itemView.findViewById(R.id.check_in_name);
             chechInVicinity = itemView.findViewById(R.id.check_in_vicinity);
-            chechInLat = itemView.findViewById(R.id.check_in_lat);
-            chechInLng = itemView.findViewById(R.id.check_in_lng);
             chechInTime = itemView.findViewById(R.id.check_in_time);
 
         }
