@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        tools:context="com.mobile.daryldaryl.mobilecomputing.MainActivity" />
+        tools:context="com.mobile.daryldaryl.mobile_computing.MainActivity" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

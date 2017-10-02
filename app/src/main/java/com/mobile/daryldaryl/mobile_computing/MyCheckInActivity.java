@@ -47,7 +47,7 @@ public class MyCheckInActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.check_in_list);
         mLayoutManager = new LinearLayoutManager(this, null, LinearLayoutManager.VERTICAL, 0);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(mAdapter = new CheckInAdapter(mData));
+        recyclerView.setAdapter(mAdapter = new CheckInAdapter(mData, this));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MyCheckInActivity.this,
                 mLayoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);

@@ -2,6 +2,7 @@ package com.mobile.daryldaryl.mobile_computing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,16 +24,17 @@ import java.util.List;
 
 public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_CHECKIN = 0;
-    private Context context;
+    private Activity activity;
     private List<Checkin> mData = null;
     private FusedLocationProviderClient mFusedLocationClient;
     public RequestQueue queue;
 
 
-    public CheckInAdapter(List mData) {
+    public CheckInAdapter(List mData, Activity activity) {
+        this.activity = activity;
         this.mData = mData;
 
-        queue = SingletonQueue.getInstance(context).
+        queue = SingletonQueue.getInstance(activity).
                 getRequestQueue();
 
 
@@ -74,6 +76,13 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(view.getContext(), checkin.getName(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(activity, CheckInDetailActivity.class);
+                    intent.putExtra("chechInName", checkin.getName());
+                    intent.putExtra("chechInVicinity", checkin.getVicinity());
+                    intent.putExtra("chechInLat", checkin.getLat());
+                    intent.putExtra("chechInLng", checkin.getLng());
+                    intent.putExtra("chechInTime", Utils.parseRecentTime(checkin.getTime()));
+                    activity.startActivity(intent);
 
                 }
             });
