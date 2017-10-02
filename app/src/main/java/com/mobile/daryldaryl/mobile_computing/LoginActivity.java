@@ -148,12 +148,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isUsernameValid(String username) {
-        //TODO: Replace this with your own logic
         return username.length() > 4;
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -238,7 +236,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                // TODO Auto-generated method stub
                 Toast.makeText(LoginActivity.this, "Network issues, please try later.", Toast.LENGTH_LONG).show();
                 showProgress(false);
                 Log.i("error", error.toString());
@@ -264,7 +261,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                // TODO Auto-generated method stub
                 Toast.makeText(LoginActivity.this, "Network issues, please try later.", Toast.LENGTH_LONG).show();
                 showProgress(false);
             }
