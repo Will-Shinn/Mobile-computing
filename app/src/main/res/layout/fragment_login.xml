@@ -36,7 +36,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_username"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textColor="@color/colorAccent" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -53,7 +54,8 @@
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textColor="@color/colorAccent" />
 
             </android.support.design.widget.TextInputLayout>
 

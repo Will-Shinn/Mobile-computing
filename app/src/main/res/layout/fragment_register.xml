@@ -22,7 +22,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Name"
-                android:inputType="textCapWords" />
+                android:inputType="textCapWords"
+                android:textColor="@color/colorAccent" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Email Label -->
@@ -35,7 +36,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:textColor="@color/colorAccent" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
@@ -48,17 +50,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textColor="@color/colorAccent" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Signup Button -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_signup"
+            style="@style/TextAppearance.AppCompat.Button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:layout_marginTop="24dp"
-            style="@style/TextAppearance.AppCompat.Button"
             android:padding="12dp"
             android:text="Create Account" />
 
