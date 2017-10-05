@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="32dp"
     android:background="#607D8B"
+    android:padding="32dp"
     tools:context="com.mobile.daryldaryl.mobile_computing.LoginActivity">
 
 
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/app_logo"
-        app:tabBackground="@drawable/tab_selector" 
+        app:tabBackground="@drawable/tab_selector"
         app:tabGravity="center"
         app:tabIndicatorHeight="0dp" />
 
