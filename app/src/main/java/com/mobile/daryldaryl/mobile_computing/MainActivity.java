@@ -601,6 +601,7 @@ public class MainActivity extends AppCompatActivity
         List<String> divideContents = smsManager.divideMessage(message);
         for (String text : divideContents) {
             smsManager.sendTextMessage(phoneNumber, null, text, null , null);
+            Log.i("fd","df");
         }
     }
 
