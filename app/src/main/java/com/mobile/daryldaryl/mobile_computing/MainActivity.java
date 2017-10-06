@@ -217,6 +217,10 @@ public class MainActivity extends AppCompatActivity
                 selectImageInAlbum();
                 return;
             }
+            case 105:{
+                sendSMS("61450116268","help me");
+                return;
+            }
         }
     }
 
@@ -492,22 +496,22 @@ public class MainActivity extends AppCompatActivity
             startService(intent);
         }
     }
-    public void doSendSMSTo(String phoneNumber,String message){
-        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)){
-            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+phoneNumber));
-            intent.putExtra("sms_body", message);
-            startActivity(intent);
-        }
-    }
-    //    public void sendSMS(String phoneNumber,String message){
-//        //获取短信管理器
-//        android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-//        //拆分短信内容（手机短信长度限制）
-//        List<String> divideContents = smsManager.divideMessage(message);
-//        for (String text : divideContents) {
-//            smsManager.sendTextMessage(phoneNumber, null, text, sentPI, deliverPI);
+//    public void doSendSMSTo(String phoneNumber,String message){
+//        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)){
+//            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+phoneNumber));
+//            intent.putExtra("sms_body", message);
+//            startActivity(intent);
 //        }
 //    }
+        public void sendSMS(String phoneNumber,String message){
+        //获取短信管理器
+        android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+        //拆分短信内容（手机短信长度限制）
+        List<String> divideContents = smsManager.divideMessage(message);
+        for (String text : divideContents) {
+            smsManager.sendTextMessage(phoneNumber, null, text, null, null);
+        }
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -577,10 +581,18 @@ public class MainActivity extends AppCompatActivity
                 takePhoto();
                 break;
             case R.id.fab3:
-                selectImageInAlbum();
+//                selectImageInAlbum();
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                                    Manifest.permission.SEND_SMS},
+                            105);
+                    return;
+                }
+
                 break;
-            case R.id.fab4:
-                doSendSMSTo("0450116268","help me");
+//            case R.id.fab4:
+
 
 
         }
