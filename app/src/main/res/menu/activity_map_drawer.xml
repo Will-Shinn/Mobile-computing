@@ -12,7 +12,7 @@
             android:title="My Check-in" />
         <item
             android:id="@+id/my_favourite"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/favorite"
             android:title="My favourite" />
         <item
             android:id="@+id/today"
