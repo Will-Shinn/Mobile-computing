@@ -600,9 +600,10 @@ public class MainActivity extends AppCompatActivity
         //拆分短信内容（手机短信长度限制）
         List<String> divideContents = smsManager.divideMessage(message);
         for (String text : divideContents) {
-            smsManager.sendTextMessage(phoneNumber, null, text, null, null);
+            smsManager.sendTextMessage(phoneNumber, null, text, null , null);
         }
     }
+
 
     @Override
     public void onClick(View view) {
