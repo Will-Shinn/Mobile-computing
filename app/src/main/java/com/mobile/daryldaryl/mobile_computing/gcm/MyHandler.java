@@ -29,6 +29,7 @@ public class MyHandler extends NotificationsHandler {
     public void onReceive(Context context, Bundle bundle) {
         ctx = context;
         String type = bundle.getString("type");
+        sendNotification("new check-in");
         switch (type) {
             case "add":
                 double lat = Double.parseDouble(bundle.getString("lat"));
