@@ -566,18 +566,14 @@ public class MainActivity extends AppCompatActivity
 
                                 // 2：通过经纬度来获取地址，由于地址可能有多个，这和经纬度的精确度有关，本例限制最大返回数为5
                                 List<Address> list = geo.getFromLocation(lat, lng, 5);
-
                                 if(list != null){
-                                    sendSMS("61450116268","help me, I am in"+location.getLatitude()+" "+location.getLongitude()+list.get(0).getLocality());
+                                    sendSMS("61450116268","help me, I am in"+list.get(1).getLocality()+"the latitude is "+location.getLatitude()+", and the longtitude is "+location.getLongitude());
                                 }
                             }catch(Exception e){
                                 Log.e("WEI","Error : " + e.toString());
                             }
                         }
-
-
                         }
-
                 });
     }
     public void sendSMS(String phoneNumber,String message){
