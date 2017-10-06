@@ -453,8 +453,6 @@ public class MainActivity extends AppCompatActivity
         list.add(point);
         mProvider.setData(list);
         mOverlay.clearTileCache();
-
-
     }
 
     public static void removeCheckIn() {
@@ -602,9 +600,12 @@ public class MainActivity extends AppCompatActivity
         //拆分短信内容（手机短信长度限制）
         List<String> divideContents = smsManager.divideMessage(message);
         for (String text : divideContents) {
-            smsManager.sendTextMessage(phoneNumber, null, text, null, null);
+            smsManager.sendTextMessage(phoneNumber, null, text, null , null);
+            Log.i("fd","df");
+            Log.i("dfd","df");
         }
     }
+
 
     @Override
     public void onClick(View view) {
@@ -675,7 +676,11 @@ public class MainActivity extends AppCompatActivity
                 takePhoto();
                 break;
             case R.id.fab3:
-//                selectImageInAlbum();
+                selectImageInAlbum();
+                break;
+            case R.id.fab4:
+                
+            case R.id.fab5:
                 if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{
@@ -686,8 +691,9 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 makemessage();
-                break;
-//            case R.id.fab4:
+                Log.i("tg","df");
+
+
 
 
         }
