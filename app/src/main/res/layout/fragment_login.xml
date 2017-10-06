@@ -62,16 +62,41 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
                 android:orientation="horizontal">
 
-                <Button
+                <android.support.v7.widget.AppCompatButton
                     android:id="@+id/email_sign_in_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#B19693"
+                    android:text="Login"
+                    android:textColor="@color/colorAccent" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Login"
-                    android:textStyle="bold" />
+                    android:text="Don't have an account yet? "
+                    android:textSize="14dip" />
 
+                <TextView
+                    android:id="@+id/link_register"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create one"
+                    android:textColor="#2196f3"
+                    android:textSize="14dip" />
             </LinearLayout>
 
 

@@ -1,8 +1,11 @@
 package com.mobile.daryldaryl.mobile_computing;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -10,6 +13,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +30,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -35,12 +40,17 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.telephony.PhoneNumberUtils;
+import android.location.Geocoder;
+import android.location.Address;
+import android.app.PendingIntent;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+//import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -68,6 +78,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.content.BroadcastReceiver;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -120,7 +132,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private Boolean isFabOpen = false;
-    private FloatingActionButton fab1, fab2, fab3;
+    private FloatingActionButton fab1, fab2, fab3, fab4, fab5;
     private Animation fab_open, fab_close, rotate_forward, rotate_backward;
 
     FloatingActionButton fab;
@@ -142,6 +154,9 @@ public class MainActivity extends AppCompatActivity
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
         fab2 = (FloatingActionButton) findViewById(R.id.fab2);
         fab3 = (FloatingActionButton) findViewById(R.id.fab3);
+        fab4 = (FloatingActionButton) findViewById(R.id.fab4);
+        fab5 = (FloatingActionButton) findViewById(R.id.fab5);
+
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
@@ -150,6 +165,8 @@ public class MainActivity extends AppCompatActivity
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
         fab3.setOnClickListener(this);
+        fab4.setOnClickListener(this);
+        fab5.setOnClickListener(this);
 
         String userId = "001";
         list = new ArrayList<>();
@@ -216,6 +233,10 @@ public class MainActivity extends AppCompatActivity
                 selectImageInAlbum();
                 return;
             }
+            case 105: {
+                sendSMS("61450116268", "help me");
+                return;
+            }
         }
     }
 
@@ -247,7 +268,6 @@ public class MainActivity extends AppCompatActivity
 //                    setResult(RESULT_OK, intent);
                     // Finally start camera activity
                     startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-
                 }
             } catch (IOException e) {
 //                setInfo(e.getMessage());
@@ -280,9 +300,15 @@ public class MainActivity extends AppCompatActivity
             fab1.startAnimation(fab_close);
             fab2.startAnimation(fab_close);
             fab3.startAnimation(fab_close);
+            fab4.startAnimation(fab_close);
+            fab5.startAnimation(fab_close);
+
             fab1.setClickable(false);
             fab2.setClickable(false);
             fab3.setClickable(false);
+            fab4.setClickable(false);
+            fab5.setClickable(false);
+
             isFabOpen = false;
             Log.d("Raj", "close");
 
@@ -292,11 +318,15 @@ public class MainActivity extends AppCompatActivity
             fab1.startAnimation(fab_open);
             fab2.startAnimation(fab_open);
             fab3.startAnimation(fab_open);
+            fab4.startAnimation(fab_open);
+            fab5.startAnimation(fab_open);
             fab1.setClickable(true);
             fab2.setClickable(true);
             fab3.setClickable(true);
+            fab4.setClickable(true);
+            fab5.setClickable(true);
             isFabOpen = true;
-            Log.d("Raj", "open");
+            Log.d("abcdefg", "open hello");
 
         }
     }
@@ -348,6 +378,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.profile) {
             // Handle the camera action
+            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
         } else if (id == R.id.my_checkin) {
             startActivity(new Intent(MainActivity.this, MyCheckInActivity.class));
         } else if (id == R.id.today) {
@@ -407,8 +438,6 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
-
-
     }
 
     private void addHeatMap() {
@@ -433,8 +462,6 @@ public class MainActivity extends AppCompatActivity
         list.add(point);
         mProvider.setData(list);
         mOverlay.clearTileCache();
-
-
     }
 
     public static void removeCheckIn() {
@@ -491,10 +518,146 @@ public class MainActivity extends AppCompatActivity
             startService(intent);
         }
     }
+//    public void doSendSMSTo(String phoneNumber,String message){
+//        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)){
+//            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+phoneNumber));
+//            intent.putExtra("sms_body", message);
+//            startActivity(intent);
+//        }
+//    }
+//private String getAddress(String  adressStr) throws IOException {
+//    Geocoder geocoder = new Geocoder(this);
+////    boolean falg = geocoder.isPresent();
+//
+//    StringBuilder stringBuilder = new StringBuilder();
+//    try {
+//
+//        //根据经纬度获取地理位置信息
+///            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+//
+//        //根据地址获取地理位置信息
+//        List<Address> addresses = geocoder.getFromLocationName(adressStr, 1);
+//
+//        if (addresses.size() > 0) {
+//            Address address = addresses.get(0);
+//            for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+//                stringBuilder.append(address.getAddressLine(i)).append("\n");
+//            }
+//            stringBuilder.append(address.getCountryName()).append("_");//国家
+//            stringBuilder.append(address.getFeatureName()).append("_");//周边地址
+//            stringBuilder.append(address.getLocality()).append("_");//市
+//            stringBuilder.append(address.getPostalCode()).append("_");
+//            stringBuilder.append(address.getCountryCode()).append("_");//国家编码
+//            stringBuilder.append(address.getAdminArea()).append("_");//省份
+//            stringBuilder.append(address.getSubAdminArea()).append("_");
+//            stringBuilder.append(address.getThoroughfare()).append("_");//道路
+//            stringBuilder.append(address.getSubLocality()).append("_");//香洲区
+//            stringBuilder.append(address.getLatitude()).append("_");//经度
+//            stringBuilder.append(address.getLongitude());//维度
+//
+//        }
+//    } catch (IOException e) {
+//        // TODO Auto-generated catch block
+//        Toast.makeText(this, "报错", Toast.LENGTH_LONG).show();
+//        e.printStackTrace();
+//    }
+//    return stringBuilder.toString();
+
+    //}
+    public void makemessage() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    102);
+            return;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+
+                            double lat = location.getLatitude();
+                            double lng = location.getLongitude();
+                            Geocoder geo = new Geocoder(mainActivity);
+                            try {
+
+                                // 2：通过经纬度来获取地址，由于地址可能有多个，这和经纬度的精确度有关，本例限制最大返回数为5
+                                List<Address> list = geo.getFromLocation(lat, lng, 5);
+
+                                if (list != null) {
+                                    sendSMS("61450116268", "help me, I am in" +
+                                            location.getLatitude() + " " + location.getLongitude() +
+                                            list.get(0).getLocality() + "https://www.google.com/maps/search/?api=1&query=" + location.getLatitude() + "," + location.getLongitude());
+                                }
+                            } catch (Exception e) {
+                                Log.e("WEI", "Error : " + e.toString());
+                            }
+                        }
+
+
+                    }
+
+                });
+    }
+
+    public void sendSMS(String phoneNumber, String message) {
+        //获取短信管理器
+        String SENT_SMS_ACTION = "SENT_SMS_ACTION";
+        Intent sentIntent = new Intent(SENT_SMS_ACTION);
+        PendingIntent sentPI = PendingIntent.getBroadcast(mainActivity, 0, sentIntent, 0);
+        android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+        //拆分短信内容（手机短信长度限制）
+
+        List<String> divideContents = smsManager.divideMessage(message);
+        for (String text : divideContents) {
+            smsManager.sendTextMessage(phoneNumber, null, text, sentPI, null);
+            Log.i("fd", "df");
+            Log.i("dfd", "df");
+        }
+        mainActivity.registerReceiver(new BroadcastReceiver() {
+
+            @Override
+            public IBinder peekService(Context myContext, Intent service) {
+                return super.peekService(myContext, service);
+            }
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
+                        Toast.makeText(context,
+                                "Message has be sent successfully!", Toast.LENGTH_SHORT)
+                                .show();
+                        break;
+                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+//                        Toast.makeText(context,
+//                                "Message failure!", Toast.LENGTH_SHORT)
+//                                .show();
+                        break;
+                    case SmsManager.RESULT_ERROR_RADIO_OFF:
+//                        Toast.makeText(context,
+//                                "Message failure!", Toast.LENGTH_SHORT)
+//                                .show();
+                        break;
+                    case SmsManager.RESULT_ERROR_NULL_PDU:
+//                        Toast.makeText(context,
+//                                "Message failure!", Toast.LENGTH_SHORT)
+//                                .show();
+                        break;
+                }
+            }
+
+        }, new IntentFilter("SENT_SMS_ACTION"));
+
+    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+
             case R.id.fab:
                 animateFAB();
                 break;
@@ -562,6 +725,22 @@ public class MainActivity extends AppCompatActivity
             case R.id.fab3:
                 selectImageInAlbum();
                 break;
+            case R.id.fab4:
+
+            case R.id.fab5:
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                                    Manifest.permission.SEND_SMS},
+                            105);
+                    Log.i("djfkd", "tdjdfk");
+
+                    return;
+                }
+                makemessage();
+                Log.i("tg", "df");
+
+
         }
 
     }

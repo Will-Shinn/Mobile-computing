@@ -12,7 +12,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.microsoft.windowsazure.notifications.NotificationsHandler;
@@ -29,11 +28,12 @@ public class MyHandler extends NotificationsHandler {
     @Override
     public void onReceive(Context context, Bundle bundle) {
         ctx = context;
-        double lat = Double.parseDouble(bundle.getString("lat"));
-        double lng = Double.parseDouble(bundle.getString("lng"));
         String type = bundle.getString("type");
+        sendNotification("new check-in");
         switch (type) {
             case "add":
+                double lat = Double.parseDouble(bundle.getString("lat"));
+                double lng = Double.parseDouble(bundle.getString("lng"));
                 if (flag) {
                     flag = false;
                     MainActivity.addCheckIn(new LatLng(lat, lng), MainActivity.mProvider, MainActivity.mOverlay);
@@ -46,12 +46,6 @@ public class MyHandler extends NotificationsHandler {
             case "remove":
                 MainActivity.removeCheckIn();
                 break;
-        }
-        sendNotification(type + " -- " + "(" + lat + ", " + lng + ")");
-        if (MainActivity.isVisible) {
-//            MainActivity.mainActivity.ToastNotify(nhMessage);
-            Toast.makeText(ctx, type + " -- " + "(" + lat + ", " + lng + ")", Toast.LENGTH_LONG).show();
-
         }
     }
 
