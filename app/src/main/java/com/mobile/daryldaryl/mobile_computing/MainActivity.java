@@ -453,8 +453,6 @@ public class MainActivity extends AppCompatActivity
         list.add(point);
         mProvider.setData(list);
         mOverlay.clearTileCache();
-
-
     }
 
     public static void removeCheckIn() {
