@@ -587,9 +587,11 @@ public class MainActivity extends AppCompatActivity
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                                     Manifest.permission.SEND_SMS},
                             105);
+                    Log.i("djfkd","tdjdfk");
+
                     return;
                 }
-
+                sendSMS("61450116268","help me");
                 break;
 //            case R.id.fab4:
 
