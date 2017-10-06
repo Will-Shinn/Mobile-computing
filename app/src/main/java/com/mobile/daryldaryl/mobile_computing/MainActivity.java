@@ -1,8 +1,11 @@
 package com.mobile.daryldaryl.mobile_computing;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -10,6 +13,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +30,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -38,7 +43,7 @@ import android.widget.Toast;
 import android.telephony.PhoneNumberUtils;
 import android.location.Geocoder;
 import android.location.Address;
-
+import android.app.PendingIntent;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -72,7 +77,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import android.content.BroadcastReceiver;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.*;
@@ -596,17 +601,54 @@ public class MainActivity extends AppCompatActivity
 
     public void sendSMS(String phoneNumber, String message) {
         //获取短信管理器
+        String SENT_SMS_ACTION = "SENT_SMS_ACTION";
+        Intent sentIntent = new Intent(SENT_SMS_ACTION);
+        PendingIntent sentPI = PendingIntent.getBroadcast(mainActivity, 0, sentIntent, 0);
         android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
         //拆分短信内容（手机短信长度限制）
+
         List<String> divideContents = smsManager.divideMessage(message);
         for (String text : divideContents) {
-            smsManager.sendTextMessage(phoneNumber, null, text, null , null);
-            Log.i("fd","df");
-            Log.i("dfd","df");
+            smsManager.sendTextMessage(phoneNumber, null, text,sentPI, null);
+            Log.i("fd", "df");
+            Log.i("dfd", "df");
         }
+        mainActivity.registerReceiver(new BroadcastReceiver() {
+
+            @Override
+            public IBinder peekService(Context myContext, Intent service) {
+                return super.peekService(myContext, service);
+            }
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
+                        Toast.makeText(context,
+                                "Message has be sent successfully!", Toast.LENGTH_SHORT)
+                                .show();
+                        break;
+                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                        Toast.makeText(context,
+                                "Message failure!", Toast.LENGTH_SHORT)
+                                .show();
+                        break;
+                    case SmsManager.RESULT_ERROR_RADIO_OFF:
+                        Toast.makeText(context,
+                                "Message failure!", Toast.LENGTH_SHORT)
+                                .show();
+                        break;
+                    case SmsManager.RESULT_ERROR_NULL_PDU:
+                        Toast.makeText(context,
+                                "Message failure!", Toast.LENGTH_SHORT)
+                                .show();
+                        break;
+                }
+            }
+
+        }, new IntentFilter("SENT_SMS_ACTION"));
+
     }
-
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
