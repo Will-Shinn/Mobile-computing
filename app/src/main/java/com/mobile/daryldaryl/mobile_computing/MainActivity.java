@@ -35,6 +35,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.telephony.PhoneNumberUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -491,10 +492,26 @@ public class MainActivity extends AppCompatActivity
             startService(intent);
         }
     }
-
+    public void doSendSMSTo(String phoneNumber,String message){
+        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)){
+            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+phoneNumber));
+            intent.putExtra("sms_body", message);
+            startActivity(intent);
+        }
+    }
+    //    public void sendSMS(String phoneNumber,String message){
+//        //获取短信管理器
+//        android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
+//        //拆分短信内容（手机短信长度限制）
+//        List<String> divideContents = smsManager.divideMessage(message);
+//        for (String text : divideContents) {
+//            smsManager.sendTextMessage(phoneNumber, null, text, sentPI, deliverPI);
+//        }
+//    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+
             case R.id.fab:
                 animateFAB();
                 break;
@@ -562,6 +579,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.fab3:
                 selectImageInAlbum();
                 break;
+            case R.id.fab4:
+                doSendSMSTo("0450116268","help me");
+
+
         }
 
     }

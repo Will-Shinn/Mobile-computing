@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginTop="24dp"
-                    android:background="#424242"
+                    android:background="#B19693"
                     android:text="Login"
                     android:textColor="@color/colorAccent" />
 
