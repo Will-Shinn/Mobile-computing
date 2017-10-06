@@ -38,6 +38,7 @@ import android.widget.Toast;
 import android.telephony.PhoneNumberUtils;
 import android.location.Geocoder;
 import android.location.Address;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private Boolean isFabOpen = false;
-    private FloatingActionButton fab1, fab2, fab3;
+    private FloatingActionButton fab1, fab2, fab3, fab4, fab5;
     private Animation fab_open, fab_close, rotate_forward, rotate_backward;
 
     FloatingActionButton fab;
@@ -145,6 +146,9 @@ public class MainActivity extends AppCompatActivity
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
         fab2 = (FloatingActionButton) findViewById(R.id.fab2);
         fab3 = (FloatingActionButton) findViewById(R.id.fab3);
+        fab4 = (FloatingActionButton) findViewById(R.id.fab4);
+        fab5 = (FloatingActionButton) findViewById(R.id.fab5);
+
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
@@ -153,6 +157,8 @@ public class MainActivity extends AppCompatActivity
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
         fab3.setOnClickListener(this);
+        fab4.setOnClickListener(this);
+        fab5.setOnClickListener(this);
 
         String userId = "001";
         list = new ArrayList<>();
@@ -219,8 +225,8 @@ public class MainActivity extends AppCompatActivity
                 selectImageInAlbum();
                 return;
             }
-            case 105:{
-                sendSMS("61450116268","help me");
+            case 105: {
+                sendSMS("61450116268", "help me");
                 return;
             }
         }
@@ -287,9 +293,15 @@ public class MainActivity extends AppCompatActivity
             fab1.startAnimation(fab_close);
             fab2.startAnimation(fab_close);
             fab3.startAnimation(fab_close);
+            fab4.startAnimation(fab_close);
+            fab5.startAnimation(fab_close);
+
             fab1.setClickable(false);
             fab2.setClickable(false);
             fab3.setClickable(false);
+            fab4.setClickable(false);
+            fab5.setClickable(false);
+
             isFabOpen = false;
             Log.d("Raj", "close");
 
@@ -299,9 +311,13 @@ public class MainActivity extends AppCompatActivity
             fab1.startAnimation(fab_open);
             fab2.startAnimation(fab_open);
             fab3.startAnimation(fab_open);
+            fab4.startAnimation(fab_open);
+            fab5.startAnimation(fab_open);
             fab1.setClickable(true);
             fab2.setClickable(true);
             fab3.setClickable(true);
+            fab4.setClickable(true);
+            fab5.setClickable(true);
             isFabOpen = true;
             Log.d("Raj", "open");
 
@@ -543,7 +559,7 @@ public class MainActivity extends AppCompatActivity
 //    }
 //    return stringBuilder.toString();
 
-//}
+    //}
     public void makemessage() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -562,25 +578,26 @@ public class MainActivity extends AppCompatActivity
                             double lat = location.getLatitude();
                             double lng = location.getLongitude();
                             Geocoder geo = new Geocoder(mainActivity);
-                            try{
+                            try {
 
                                 // 2：通过经纬度来获取地址，由于地址可能有多个，这和经纬度的精确度有关，本例限制最大返回数为5
                                 List<Address> list = geo.getFromLocation(lat, lng, 5);
 
-                                if(list != null){
-                                    sendSMS("61450116268","help me, I am in"+location.getLatitude()+" "+location.getLongitude()+list.get(0).getLocality());
+                                if (list != null) {
+                                    sendSMS("61450116268", "help me, I am in" + location.getLatitude() + " " + location.getLongitude() + list.get(0).getLocality());
                                 }
-                            }catch(Exception e){
-                                Log.e("WEI","Error : " + e.toString());
+                            } catch (Exception e) {
+                                Log.e("WEI", "Error : " + e.toString());
                             }
                         }
 
 
-                        }
+                    }
 
                 });
     }
-    public void sendSMS(String phoneNumber,String message){
+
+    public void sendSMS(String phoneNumber, String message) {
         //获取短信管理器
         android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
         //拆分短信内容（手机短信长度限制）
@@ -589,6 +606,7 @@ public class MainActivity extends AppCompatActivity
             smsManager.sendTextMessage(phoneNumber, null, text, null, null);
         }
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -664,7 +682,7 @@ public class MainActivity extends AppCompatActivity
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                                     Manifest.permission.SEND_SMS},
                             105);
-                    Log.i("djfkd","tdjdfk");
+                    Log.i("djfkd", "tdjdfk");
 
                     return;
                 }
