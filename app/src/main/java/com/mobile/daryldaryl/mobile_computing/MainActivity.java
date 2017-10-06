@@ -602,6 +602,7 @@ public class MainActivity extends AppCompatActivity
         for (String text : divideContents) {
             smsManager.sendTextMessage(phoneNumber, null, text, null , null);
             Log.i("fd","df");
+            Log.i("dfd","df");
         }
     }
 
