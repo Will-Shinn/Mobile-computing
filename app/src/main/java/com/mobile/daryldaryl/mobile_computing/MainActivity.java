@@ -629,19 +629,19 @@ public class MainActivity extends AppCompatActivity
                                 .show();
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        Toast.makeText(context,
-                                "Message failure!", Toast.LENGTH_SHORT)
-                                .show();
+//                        Toast.makeText(context,
+//                                "Message failure!", Toast.LENGTH_SHORT)
+//                                .show();
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        Toast.makeText(context,
-                                "Message failure!", Toast.LENGTH_SHORT)
-                                .show();
+//                        Toast.makeText(context,
+//                                "Message failure!", Toast.LENGTH_SHORT)
+//                                .show();
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
-                        Toast.makeText(context,
-                                "Message failure!", Toast.LENGTH_SHORT)
-                                .show();
+//                        Toast.makeText(context,
+//                                "Message failure!", Toast.LENGTH_SHORT)
+//                                .show();
                         break;
                 }
             }
