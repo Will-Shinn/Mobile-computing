@@ -89,7 +89,8 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".RecognitionActivity" />
         <activity android:name=".MyCheckInActivity" />
-        <activity android:name=".CheckInDetailActivity"></activity>
+        <activity android:name=".CheckInDetailActivity" />
+        <activity android:name=".ProfileActivity"></activity>
     </application>
 
 </manifest>

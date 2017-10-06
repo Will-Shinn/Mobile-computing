@@ -44,6 +44,7 @@ import android.telephony.PhoneNumberUtils;
 import android.location.Geocoder;
 import android.location.Address;
 import android.app.PendingIntent;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -77,7 +78,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.content.BroadcastReceiver;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.*;
@@ -375,6 +378,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.profile) {
             // Handle the camera action
+            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
         } else if (id == R.id.my_checkin) {
             startActivity(new Intent(MainActivity.this, MyCheckInActivity.class));
         } else if (id == R.id.today) {
@@ -567,7 +571,7 @@ public class MainActivity extends AppCompatActivity
                             android.Manifest.permission.ACCESS_FINE_LOCATION,
                             android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     102);
-        return;
+            return;
         }
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -586,7 +590,7 @@ public class MainActivity extends AppCompatActivity
                                 if (list != null) {
                                     sendSMS("61450116268", "help me, I am in" +
                                             location.getLatitude() + " " + location.getLongitude() +
-                                            list.get(0).getLocality()+"https://www.google.com/maps/search/?api=1&query="+location.getLatitude()+","+location.getLongitude());
+                                            list.get(0).getLocality() + "https://www.google.com/maps/search/?api=1&query=" + location.getLatitude() + "," + location.getLongitude());
                                 }
                             } catch (Exception e) {
                                 Log.e("WEI", "Error : " + e.toString());
@@ -609,7 +613,7 @@ public class MainActivity extends AppCompatActivity
 
         List<String> divideContents = smsManager.divideMessage(message);
         for (String text : divideContents) {
-            smsManager.sendTextMessage(phoneNumber, null, text,sentPI, null);
+            smsManager.sendTextMessage(phoneNumber, null, text, sentPI, null);
             Log.i("fd", "df");
             Log.i("dfd", "df");
         }
@@ -649,6 +653,7 @@ public class MainActivity extends AppCompatActivity
         }, new IntentFilter("SENT_SMS_ACTION"));
 
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -721,7 +726,7 @@ public class MainActivity extends AppCompatActivity
                 selectImageInAlbum();
                 break;
             case R.id.fab4:
-                
+
             case R.id.fab5:
                 if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
@@ -733,9 +738,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 makemessage();
-                Log.i("tg","df");
-
-
+                Log.i("tg", "df");
 
 
         }
