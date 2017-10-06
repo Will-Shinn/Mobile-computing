@@ -36,12 +36,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.telephony.PhoneNumberUtils;
-
+import android.location.Geocoder;
+import android.location.Address;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+//import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -503,7 +505,82 @@ public class MainActivity extends AppCompatActivity
 //            startActivity(intent);
 //        }
 //    }
-        public void sendSMS(String phoneNumber,String message){
+//private String getAddress(String  adressStr) throws IOException {
+//    Geocoder geocoder = new Geocoder(this);
+////    boolean falg = geocoder.isPresent();
+//
+//    StringBuilder stringBuilder = new StringBuilder();
+//    try {
+//
+//        //根据经纬度获取地理位置信息
+///            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+//
+//        //根据地址获取地理位置信息
+//        List<Address> addresses = geocoder.getFromLocationName(adressStr, 1);
+//
+//        if (addresses.size() > 0) {
+//            Address address = addresses.get(0);
+//            for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+//                stringBuilder.append(address.getAddressLine(i)).append("\n");
+//            }
+//            stringBuilder.append(address.getCountryName()).append("_");//国家
+//            stringBuilder.append(address.getFeatureName()).append("_");//周边地址
+//            stringBuilder.append(address.getLocality()).append("_");//市
+//            stringBuilder.append(address.getPostalCode()).append("_");
+//            stringBuilder.append(address.getCountryCode()).append("_");//国家编码
+//            stringBuilder.append(address.getAdminArea()).append("_");//省份
+//            stringBuilder.append(address.getSubAdminArea()).append("_");
+//            stringBuilder.append(address.getThoroughfare()).append("_");//道路
+//            stringBuilder.append(address.getSubLocality()).append("_");//香洲区
+//            stringBuilder.append(address.getLatitude()).append("_");//经度
+//            stringBuilder.append(address.getLongitude());//维度
+//
+//        }
+//    } catch (IOException e) {
+//        // TODO Auto-generated catch block
+//        Toast.makeText(this, "报错", Toast.LENGTH_LONG).show();
+//        e.printStackTrace();
+//    }
+//    return stringBuilder.toString();
+
+//}
+    public void makemessage() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    102);
+
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+
+                            double lat = location.getLatitude();
+                            double lng = location.getLongitude();
+                            Geocoder geo = new Geocoder(mainActivity);
+                            try{
+
+                                // 2：通过经纬度来获取地址，由于地址可能有多个，这和经纬度的精确度有关，本例限制最大返回数为5
+                                List<Address> list = geo.getFromLocation(lat, lng, 5);
+
+                                if(list != null){
+                                    sendSMS("61450116268","help me, I am in"+location.getLatitude()+" "+location.getLongitude()+list.get(0).getLocality());
+                                }
+                            }catch(Exception e){
+                                Log.e("WEI","Error : " + e.toString());
+                            }
+                        }
+
+
+                        }
+
+                });
+    }
+    public void sendSMS(String phoneNumber,String message){
         //获取短信管理器
         android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
         //拆分短信内容（手机短信长度限制）
@@ -591,10 +668,9 @@ public class MainActivity extends AppCompatActivity
 
                     return;
                 }
-                sendSMS("61450116268","help me");
+                makemessage();
                 break;
 //            case R.id.fab4:
-
 
 
         }
