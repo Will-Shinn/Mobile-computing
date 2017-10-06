@@ -675,7 +675,11 @@ public class MainActivity extends AppCompatActivity
                 takePhoto();
                 break;
             case R.id.fab3:
-//                selectImageInAlbum();
+                selectImageInAlbum();
+                break;
+            case R.id.fab4:
+                
+            case R.id.fab5:
                 if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{
@@ -686,8 +690,9 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 makemessage();
-                break;
-//            case R.id.fab4:
+                Log.i("tg","df");
+
+
 
 
         }
