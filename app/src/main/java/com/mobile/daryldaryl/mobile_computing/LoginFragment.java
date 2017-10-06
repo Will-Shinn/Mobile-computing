@@ -7,9 +7,13 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -38,6 +42,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.R.attr.fragment;
+import static com.mobile.daryldaryl.mobile_computing.LoginActivity.mPager;
+
 /**
  * Created by liboa on 3/10/2017.
  */
@@ -49,6 +56,8 @@ public class LoginFragment extends Fragment {
     private View mProgressView;
     private View mLoginFormView;
 
+    private TextView textView;
+
     private RequestQueue queue;
 
     @Override
@@ -58,6 +67,18 @@ public class LoginFragment extends Fragment {
                 R.layout.fragment_login, container, false);
 
         queue = SingletonQueue.getInstance(getActivity()).getRequestQueue();
+
+
+        textView = rootView.findViewById(R.id.link_register);
+        textView.setPaintFlags(textView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+
+            }
+        });
 
         mUsernameView = rootView.findViewById(R.id.login_username);
 
