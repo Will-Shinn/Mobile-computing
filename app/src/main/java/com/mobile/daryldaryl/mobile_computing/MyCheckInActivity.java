@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mobile.daryldaryl.mobile_computing.models.Checkin;
+import com.mobile.daryldaryl.mobile_computing.models.CheckinHeader;
 import com.mobile.daryldaryl.mobile_computing.models.Place;
 import com.mobile.daryldaryl.mobile_computing.tools.ServerInfo;
 import com.mobile.daryldaryl.mobile_computing.tools.SingletonQueue;
@@ -47,10 +48,7 @@ public class MyCheckInActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.check_in_list);
         mLayoutManager = new LinearLayoutManager(this, null, LinearLayoutManager.VERTICAL, 0);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(mAdapter = new CheckInAdapter(mData, this));
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MyCheckInActivity.this,
-//                mLayoutManager.getOrientation());
-//        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setAdapter(mAdapter = new CheckInAdapter(mData, this, getSupportFragmentManager()));
         mAdapter.notifyDataSetChanged();
 
         init();
@@ -65,6 +63,18 @@ public class MyCheckInActivity extends AppCompatActivity {
                 try {
                     JSONArray jsonArray = (JSONArray) response.get("results");
                     for (int i = 0; i < jsonArray.length(); i++) {
+                        if (i == jsonArray.length() - 1) {
+                            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                            CheckinHeader checkin = new CheckinHeader(true);
+                            checkin.setName(jsonObject.getString("name"));
+                            checkin.setVicinity(jsonObject.getString("vicinity"));
+                            checkin.setLat(jsonObject.getDouble("lat"));
+                            checkin.setLng(jsonObject.getDouble("lng"));
+                            checkin.setTime(jsonObject.getLong("time"));
+                            mData.add(checkin);
+
+                            continue;
+                        }
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                         Checkin checkin = new Checkin();
                         checkin.setName(jsonObject.getString("name"));

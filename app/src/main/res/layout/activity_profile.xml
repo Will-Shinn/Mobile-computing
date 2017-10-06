@@ -45,6 +45,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
                     android:padding="5dp"
                     android:src="@drawable/name" />
 
@@ -59,7 +60,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="daryldaryl" />
+                    android:layout_weight="1"
+                    android:text="daryldaryl"
+                    android:textSize="14dp" />
             </TableRow>
 
             <TableRow
@@ -70,6 +73,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
                     android:padding="5dp"
                     android:src="@drawable/email" />
 
@@ -84,7 +88,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="liboao1122@hotmail.com" />
+                    android:layout_weight="1"
+                    android:text="liboao1122@hotmail.com"
+                    android:textSize="14dp" />
 
             </TableRow>
 
@@ -96,6 +102,7 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
                     android:padding="5dp"
                     android:src="@drawable/city" />
 
@@ -110,17 +117,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="Melbourne" />
+                    android:layout_weight="1"
+                    android:text="Melbourne"
+                    android:textSize="14dp" />
             </TableRow>
 
             <TableRow
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp">
 
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
                     android:padding="5dp"
                     android:src="@drawable/sos_2" />
 
@@ -129,13 +139,16 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="10dp"
-                    android:text="Emergency Contact" />
+                    android:text="Emergency Contact"
+                    android:textSize="12dp" />
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="+xxxxxxxxxxx" />
+                    android:layout_weight="1"
+                    android:text="+xxxxxxxxxxx"
+                    android:textSize="14dp" />
             </TableRow>
         </TableLayout>
 
