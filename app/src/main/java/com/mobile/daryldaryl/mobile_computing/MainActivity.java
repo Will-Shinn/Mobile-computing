@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity
             fab4.setClickable(true);
             fab5.setClickable(true);
             isFabOpen = true;
-            Log.d("Raj", "open");
+            Log.d("abcdefg", "open hello");
 
         }
     }
