@@ -260,7 +260,6 @@ public class MainActivity extends AppCompatActivity
 //                    setResult(RESULT_OK, intent);
                     // Finally start camera activity
                     startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-
                 }
             } catch (IOException e) {
 //                setInfo(e.getMessage());
@@ -430,8 +429,6 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
-
-
     }
 
     private void addHeatMap() {
@@ -567,7 +564,7 @@ public class MainActivity extends AppCompatActivity
                             android.Manifest.permission.ACCESS_FINE_LOCATION,
                             android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     102);
-
+        return;
         }
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -584,7 +581,9 @@ public class MainActivity extends AppCompatActivity
                                 List<Address> list = geo.getFromLocation(lat, lng, 5);
 
                                 if (list != null) {
-                                    sendSMS("61450116268", "help me, I am in" + location.getLatitude() + " " + location.getLongitude() + list.get(0).getLocality());
+                                    sendSMS("61450116268", "help me, I am in" +
+                                            location.getLatitude() + " " + location.getLongitude() +
+                                            list.get(0).getLocality()+"https://www.google.com/maps/search/?api=1&query="+location.getLatitude()+","+location.getLongitude());
                                 }
                             } catch (Exception e) {
                                 Log.e("WEI", "Error : " + e.toString());
