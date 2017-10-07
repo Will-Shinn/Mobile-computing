@@ -1,32 +1,45 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.luolc.emojirain.EmojiRainLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/group_emoji_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#D75455"
-    android:padding="32dp"
+    app:dropDuration="2400"
+    app:dropFrequency="500"
+    app:duration="10000"
+    app:per="8"
     tools:context="com.mobile.daryldaryl.mobile_computing.WelcomeActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="50dp">
 
-    <ImageView
-        android:id="@+id/app_logo"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/kaola" />
+        <ImageView
+            android:id="@+id/app_logo"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/kaola" />
 
-    <ImageView
-        android:id="@+id/app_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/app_logo"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/title" />
+        <ImageView
+            android:id="@+id/app_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_logo"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="40dp"
+            android:src="@drawable/title" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/app_logo"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/title2" />
-</RelativeLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_logo"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/title2" />
+    </RelativeLayout>
+
+</com.luolc.emojirain.EmojiRainLayout>
