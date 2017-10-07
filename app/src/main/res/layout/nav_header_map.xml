@@ -16,7 +16,6 @@
         android:id="@+id/imageView"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
         app:srcCompat="@drawable/kaola" />
 
     <TextView
