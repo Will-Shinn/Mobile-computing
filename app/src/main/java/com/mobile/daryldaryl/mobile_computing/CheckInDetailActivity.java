@@ -23,8 +23,7 @@ public class CheckInDetailActivity extends AppCompatActivity implements OnMapRea
     private String chechInTime;
 
     private TextView checkInPlaceView;
-    private TextView checkInLatView;
-    private TextView checkInLngView;
+    private TextView checkInCoorView;
     private TextView checkInVicinityView;
     private TextView checkInTimeView;
 
@@ -45,14 +44,12 @@ public class CheckInDetailActivity extends AppCompatActivity implements OnMapRea
         chechInTime = intent.getStringExtra("chechInTime");
 
         checkInPlaceView = (TextView) findViewById(R.id.check_in_name);
-        checkInLatView = (TextView) findViewById(R.id.check_in_lat);
-        checkInLngView = (TextView) findViewById(R.id.check_in_lng);
+        checkInCoorView = (TextView) findViewById(R.id.check_in_coor);
         checkInVicinityView = (TextView) findViewById(R.id.check_in_vicinity);
         checkInTimeView = (TextView) findViewById(R.id.check_in_time);
 
         checkInPlaceView.setText(chechInName);
-        checkInLatView.setText(chechInLat + "");
-        checkInLngView.setText(chechInLng + "");
+        checkInCoorView.setText("( " + chechInLng + ", " + chechInLng + " )");
         checkInVicinityView.setText(chechInVicinity);
         checkInTimeView.setText(chechInTime);
     }

@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.mobile.daryldaryl.mobile_computing.tools.ServerInfo;
 import com.mobile.daryldaryl.mobile_computing.tools.SingletonQueue;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -38,6 +39,11 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText edit_contact;
 
     private RequestQueue queue;
+
+    private String displayName;
+    private String city;
+    private String email;
+    private long contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +60,10 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        String displayName = intent.getStringExtra("displayName");
-        String city = intent.getStringExtra("city");
-        String email = intent.getStringExtra("email");
-        long contact = intent.getLongExtra("contact", 61437730888l);
+        displayName = intent.getStringExtra("displayName");
+        city = intent.getStringExtra("city");
+        email = intent.getStringExtra("email");
+        contact = intent.getLongExtra("contact", 61437730888l);
 
         edit_name.setText(displayName);
         edit_email.setText(email);
@@ -70,41 +76,77 @@ public class ProfileActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = ServerInfo.url + "/update";
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.i("LoginActivity", response.toString());
-
+                if (changed()) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("displayName", edit_name.getText().toString());
+                        jsonObject.put("city", edit_city.getText().toString());
+                        jsonObject.put("contact", Long.parseLong(edit_contact.getText().toString()));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
+                    String url = ServerInfo.url + "/update";
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(ProfileActivity.this, "Network issues, please try later.", Toast.LENGTH_LONG).show();
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.i("LoginActivity", response.toString());
+                            boolean success = false;
+                            try {
+                                success = response.getBoolean("success");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
-                    }
-                }) {
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
-                                "Mobile", Context.MODE_PRIVATE);
-                        String access_token = sharedPref.getString("access_token", "");
+                            if (success) {
+                                Toast.makeText(ProfileActivity.this, "update profile succeed", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(ProfileActivity.this, "update profile failed", Toast.LENGTH_LONG).show();
+                            }
 
-                        Map<String, String> headers = new HashMap<>();
-                        headers.put("Accept", "application/json");
-                        headers.put("Authorization", access_token);
 
-                        return headers;
-                    }
-                };
-                queue.add(jsonObjectRequest);
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(ProfileActivity.this, "Network issues, please try later.", Toast.LENGTH_LONG).show();
+
+                        }
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                                    "Mobile", Context.MODE_PRIVATE);
+                            String access_token = sharedPref.getString("access_token", "");
+
+                            Map<String, String> headers = new HashMap<>();
+                            headers.put("Accept", "application/json");
+                            headers.put("Authorization", access_token);
+
+                            return headers;
+                        }
+                    };
+                    queue.add(jsonObjectRequest);
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Nothing changed", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
     }
 
-    
 
+    public boolean changed() {
+        String tmp_name = edit_name.getText().toString();
+        String tmp_city = edit_city.getText().toString();
+        long tmp_contact = Long.parseLong(edit_contact.getText().toString());
+
+        if (tmp_city.equals(city) && tmp_contact == contact && tmp_name.equals(displayName))
+            return false;
+
+        return true;
+    }
 }
