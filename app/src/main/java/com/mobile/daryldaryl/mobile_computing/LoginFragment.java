@@ -36,6 +36,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.mobile.daryldaryl.mobile_computing.tools.ServerInfo;
 import com.mobile.daryldaryl.mobile_computing.tools.SingletonQueue;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -269,8 +270,29 @@ public class LoginFragment extends Fragment {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i("LoginActivity", response.toString());
-                startActivity(new Intent(getActivity(), MainActivity.class));
-                getActivity().finish();
+                try {
+                    JSONObject results = (JSONObject) response.getJSONArray("results").get(0);
+
+                    String displayName = results.getString("displayName");
+                    String city = results.getString("city");
+                    String email = results.getString("email");
+                    long contact = results.getLong("contact");
+
+
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra("displayName", displayName);
+                    intent.putExtra("city", city);
+                    intent.putExtra("email", email);
+                    intent.putExtra("contact", contact);
+
+
+                    startActivity(intent);
+                    getActivity().finish();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         }, new Response.ErrorListener() {
 

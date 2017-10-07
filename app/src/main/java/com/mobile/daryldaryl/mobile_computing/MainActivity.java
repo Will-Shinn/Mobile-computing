@@ -62,6 +62,7 @@ import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.vision.text.Text;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.mobile.daryldaryl.mobile_computing.gcm.MyHandler;
@@ -126,9 +127,11 @@ public class MainActivity extends AppCompatActivity
     private Uri mImageUri;
     private Location currentLocation;
 
-    private TextView username;
-    private TextView useremail;
+
     private RelativeLayout relativeLayout;
+
+    private TextView nav_displayName;
+    private TextView nav_email;
 
 
     private Boolean isFabOpen = false;
@@ -138,6 +141,11 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton fab;
     Dialog dialog;
 
+    private String displayName;
+    private String city;
+    private String email;
+    private long contact;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,10 +154,17 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
 
+        Intent intent = getIntent();
+        displayName = intent.getStringExtra("displayName");
+        city = intent.getStringExtra("city");
+        email = intent.getStringExtra("email");
+        contact = intent.getLongExtra("contact", 61437730888l);
 
         mainActivity = this;
+
         NotificationsManager.handleNotifications(this, NotificationSettings.SenderId, MyHandler.class);
         registerWithNotificationHubs();
+
 
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
         fab2 = (FloatingActionButton) findViewById(R.id.fab2);
@@ -183,8 +198,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         View header = navigationView.getHeaderView(0);
-        username = header.findViewById(R.id.username);
-        useremail = header.findViewById(R.id.useremail);
+
+        nav_displayName = header.findViewById(R.id.nav_displayName);
+        nav_email = header.findViewById(R.id.nav_email);
+
+        nav_displayName.setText(displayName);
+        nav_email.setText(email);
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -378,7 +398,15 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.profile) {
             // Handle the camera action
-            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.putExtra("displayName", displayName);
+            intent.putExtra("city", city);
+            intent.putExtra("email", email);
+            intent.putExtra("contact", contact);
+
+
+            startActivity(intent);
+
         } else if (id == R.id.my_checkin) {
             startActivity(new Intent(MainActivity.this, MyCheckInActivity.class));
         } else if (id == R.id.today) {

@@ -7,12 +7,39 @@
     android:orientation="vertical"
     tools:context="com.mobile.daryldaryl.mobile_computing.ProfileActivity">
 
+    <RelativeLayout
+        android:id="@+id/check_in_header"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp">
+
+
+        <TextView
+            android:id="@+id/chechk_in_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:text="My Check-in"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="save"
+            android:textSize="20dp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
         android:background="@drawable/bottom_border"
         android:padding="10dp">
 
@@ -47,22 +74,25 @@
                     android:layout_height="32dp"
                     android:layout_gravity="center_vertical"
                     android:padding="5dp"
-                    android:src="@drawable/name" />
+                    android:src="@drawable/email" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="10dp"
-                    android:text="Name" />
+                    android:text="E-mail" />
 
-                <EditText
+                <TextView
+                    android:id="@+id/edit_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:text="daryldaryl"
+                    android:textStyle="bold"
+                    android:text="liboao1122@hotmail.com"
                     android:textSize="14dp" />
+
             </TableRow>
 
             <TableRow
@@ -75,24 +105,26 @@
                     android:layout_height="32dp"
                     android:layout_gravity="center_vertical"
                     android:padding="5dp"
-                    android:src="@drawable/email" />
+                    android:src="@drawable/name" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="10dp"
-                    android:text="E-mail" />
+                    android:text="Name" />
 
                 <EditText
+                    android:id="@+id/edit_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:text="liboao1122@hotmail.com"
+                    android:text="daryldaryl"
                     android:textSize="14dp" />
-
             </TableRow>
+
+
 
             <TableRow
                 android:layout_width="wrap_content"
@@ -114,6 +146,7 @@
                     android:text="City" />
 
                 <EditText
+                    android:id="@+id/edit_city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -143,6 +176,7 @@
                     android:textSize="12dp" />
 
                 <EditText
+                    android:id="@+id/edit_contact"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

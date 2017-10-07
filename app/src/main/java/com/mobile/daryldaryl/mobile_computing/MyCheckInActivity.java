@@ -63,7 +63,7 @@ public class MyCheckInActivity extends AppCompatActivity {
                 try {
                     JSONArray jsonArray = (JSONArray) response.get("results");
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        if (i == jsonArray.length() - 1) {
+                        if (i == 0) {
                             JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                             CheckinHeader checkin = new CheckinHeader(true);
                             checkin.setName(jsonObject.getString("name"));
@@ -72,7 +72,6 @@ public class MyCheckInActivity extends AppCompatActivity {
                             checkin.setLng(jsonObject.getDouble("lng"));
                             checkin.setTime(jsonObject.getLong("time"));
                             mData.add(checkin);
-
                             continue;
                         }
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);

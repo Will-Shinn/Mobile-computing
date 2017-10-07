@@ -39,6 +39,8 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private FusedLocationProviderClient mFusedLocationClient;
     private FragmentManager fragmentManager;
     public RequestQueue queue;
+    public double lat;
+    public double lng;
 
 
     public CheckInAdapter(List mData, Activity activity, FragmentManager fragmentManager) {
@@ -68,6 +70,10 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
         if (mData.get(position) instanceof CheckinHeader) {
+            final Checkin checkin = mData.get(position);
+            lat = checkin.getLat();
+            lng = checkin.getLng();
+
             return VIEW_TYPE_CHECKIN_HEADER;
         } else if (mData.get(position) instanceof Checkin) {
             return VIEW_TYPE_CHECKIN;
@@ -104,13 +110,24 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (holder instanceof ChechkInHeaderViewHolder) {
             final Checkin checkin = mData.get(position);
             ChechkInHeaderViewHolder chechkInHeaderViewHolder = (ChechkInHeaderViewHolder) holder;
+            chechkInHeaderViewHolder.chechInName.setText(checkin.getName());
+            chechkInHeaderViewHolder.chechInVicinity.setText(checkin.getVicinity());
+            chechkInHeaderViewHolder.chechInTime.setText(Utils.parseRecentTime(checkin.getTime()));
 
-            LatLng latLng = new LatLng(checkin.getLat(), checkin.getLng());
-            chechkInHeaderViewHolder.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(view.getContext(), checkin.getName(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(activity, CheckInDetailActivity.class);
+                    intent.putExtra("chechInName", checkin.getName());
+                    intent.putExtra("chechInVicinity", checkin.getVicinity());
+                    intent.putExtra("chechInLat", checkin.getLat());
+                    intent.putExtra("chechInLng", checkin.getLng());
+                    intent.putExtra("chechInTime", Utils.parseRecentTime(checkin.getTime()));
+                    activity.startActivity(intent);
 
-            chechkInHeaderViewHolder.mMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title(""));
+                }
+            });
         }
     }
 
@@ -156,7 +173,12 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
 
+            LatLng latLng = new LatLng(lat, lng);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
+            mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(""));
         }
     }
 
