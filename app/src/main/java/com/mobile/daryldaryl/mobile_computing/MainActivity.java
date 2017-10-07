@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity
     private String city;
     private String email;
     private long contact;
+    public static boolean HEATMAP = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -254,7 +255,7 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
             case 105: {
-                sendSMS("61450116268", "help me");
+                sendSMS(String.valueOf(contact), "help me");
                 return;
             }
         }
@@ -486,6 +487,17 @@ public class MainActivity extends AppCompatActivity
 //        mOverlay.clearTileCache();
     }
 
+    public void switch_heatmap() {
+        if (HEATMAP) {
+            mOverlay.remove();
+            mOverlaydb.remove();
+            HEATMAP = false;
+        } else {
+            addHeatMap();
+            HEATMAP = true;
+        }
+    }
+
     public static void addCheckIn(LatLng point, HeatmapTileProvider mProvider, TileOverlay mOverlay) {
         list.add(point);
         mProvider.setData(list);
@@ -500,19 +512,6 @@ public class MainActivity extends AppCompatActivity
         mOverlaydb.clearTileCache();
     }
 
-//    @Override
-//    public boolean onMenuItemClick(MenuItem item) {
-//        Log.i("menu", item + " " + item.getItemId());
-//        switch (item.getItemId()) {
-//            case R.id.camera:
-//                takePhoto();
-//                break;
-//            case R.id.album:
-//                selectImageInAlbum();
-//                break;
-//        }
-//        return false;
-//    }
 
     /**
      * Check the device to make sure it has the Google Play Services APK. If
@@ -612,11 +611,10 @@ public class MainActivity extends AppCompatActivity
                             Geocoder geo = new Geocoder(mainActivity);
                             try {
 
-                                // 2：通过经纬度来获取地址，由于地址可能有多个，这和经纬度的精确度有关，本例限制最大返回数为5
                                 List<Address> list = geo.getFromLocation(lat, lng, 5);
 
                                 if (list != null) {
-                                    sendSMS("61450116268", "help me, I am in" +
+                                    sendSMS(String.valueOf(contact), "help me, I am at" +
                                             location.getLatitude() + " " + location.getLongitude() +
                                             list.get(0).getLocality() + "https://www.google.com/maps/search/?api=1&query=" + location.getLatitude() + "," + location.getLongitude());
                                 }
@@ -632,12 +630,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void sendSMS(String phoneNumber, String message) {
-        //获取短信管理器
+
         String SENT_SMS_ACTION = "SENT_SMS_ACTION";
         Intent sentIntent = new Intent(SENT_SMS_ACTION);
         PendingIntent sentPI = PendingIntent.getBroadcast(mainActivity, 0, sentIntent, 0);
         android.telephony.SmsManager smsManager = android.telephony.SmsManager.getDefault();
-        //拆分短信内容（手机短信长度限制）
+
 
         List<String> divideContents = smsManager.divideMessage(message);
         for (String text : divideContents) {
@@ -761,32 +759,16 @@ public class MainActivity extends AppCompatActivity
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                                     Manifest.permission.SEND_SMS},
                             105);
-                    Log.i("djfkd", "tdjdfk");
 
                     return;
                 }
                 makemessage();
-                Log.i("tg", "df");
 
 
         }
 
     }
 
-//    @Override
-//    public boolean onLongClick(View view) {
-//        //-37.820592,144.942762
-//        PopupMenu popup = new PopupMenu(MainActivity.this, view, Gravity.CENTER);
-//        popup.getMenuInflater()
-//                .inflate(R.menu.select_pic, popup.getMenu());
-//
-//        popup.setOnMenuItemClickListener(MainActivity.this);
-//
-//        popup.show();
-//
-////                takePhoto();
-//        return false;
-//    }
 
     @Override
     protected void onStart() {

@@ -27,6 +27,7 @@ public class MyHandler extends NotificationsHandler {
 
     @Override
     public void onReceive(Context context, Bundle bundle) {
+
         ctx = context;
         String type = bundle.getString("type");
         sendNotification("new check-in");
@@ -34,14 +35,19 @@ public class MyHandler extends NotificationsHandler {
             case "add":
                 double lat = Double.parseDouble(bundle.getString("lat"));
                 double lng = Double.parseDouble(bundle.getString("lng"));
-                if (flag) {
-                    flag = false;
-                    MainActivity.addCheckIn(new LatLng(lat, lng), MainActivity.mProvider, MainActivity.mOverlay);
+                if (MainActivity.HEATMAP) {
+                    if (flag) {
+                        flag = false;
+                        MainActivity.addCheckIn(new LatLng(lat, lng), MainActivity.mProvider, MainActivity.mOverlay);
 
+                    } else {
+                        flag = true;
+                        MainActivity.addCheckIn(new LatLng(lat, lng), MainActivity.mProviderdb, MainActivity.mOverlaydb);
+                    }
                 } else {
-                    flag = true;
-                    MainActivity.addCheckIn(new LatLng(lat, lng), MainActivity.mProviderdb, MainActivity.mOverlaydb);
+                    
                 }
+
                 break;
             case "remove":
                 MainActivity.removeCheckIn();
