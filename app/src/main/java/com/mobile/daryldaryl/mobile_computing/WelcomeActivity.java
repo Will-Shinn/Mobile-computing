@@ -1,9 +1,13 @@
 package com.mobile.daryldaryl.mobile_computing;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.session.MediaController;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.VideoView;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -19,5 +23,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 finish();
             }
         }, 1500);
+
     }
+
 }

@@ -25,14 +25,15 @@ public class MyHandler extends NotificationsHandler {
     NotificationCompat.Builder builder;
     Context ctx;
     boolean flag = true;
+    boolean flag_remove = true;
 
     @Override
     public void onReceive(Context context, Bundle bundle) {
 
-        Log.i("Hello", "hello world");
+//        Log.i("Hello", "hello world");
         ctx = context;
         String type = bundle.getString("type");
-        sendNotification("new check-in");
+//        sendNotification("new check-in");
         switch (type) {
             case "add":
                 double lat = Double.parseDouble(bundle.getString("lat"));
@@ -52,7 +53,13 @@ public class MyHandler extends NotificationsHandler {
 
                 break;
             case "remove":
-                MainActivity.removeCheckIn();
+                if (flag_remove) {
+                    flag_remove = false;
+                    MainActivity.removeCheckIn(1);
+                } else {
+                    flag_remove = true;
+                    MainActivity.removeCheckIn(2);
+                }
                 break;
         }
     }

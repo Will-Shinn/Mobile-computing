@@ -475,18 +475,28 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static void addCheckIn(LatLng point, HeatmapTileProvider mProvider, TileOverlay mOverlay) {
+    public static synchronized void addCheckIn(LatLng point, HeatmapTileProvider mProvider, TileOverlay mOverlay) {
         list.add(point);
         mProvider.setData(list);
         mOverlay.clearTileCache();
     }
 
-    public static void removeCheckIn() {
+    public static synchronized void removeCheckIn(int i) {
+        if (list.size() <= 1)
+            return;
+
         list.remove(1);
-        mProvider.setData(list);
-        mOverlay.clearTileCache();
-        mProviderdb.setData(list);
-        mOverlaydb.clearTileCache();
+        switch (i) {
+            case 1:
+                mProvider.setData(list);
+                mOverlay.clearTileCache();
+                break;
+            case 2:
+                mProviderdb.setData(list);
+                mOverlaydb.clearTileCache();
+                break;
+        }
+
     }
 
 
