@@ -12,6 +12,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.microsoft.windowsazure.notifications.NotificationsHandler;
@@ -28,6 +29,7 @@ public class MyHandler extends NotificationsHandler {
     @Override
     public void onReceive(Context context, Bundle bundle) {
 
+        Log.i("Hello", "hello world");
         ctx = context;
         String type = bundle.getString("type");
         sendNotification("new check-in");
@@ -45,7 +47,7 @@ public class MyHandler extends NotificationsHandler {
                         MainActivity.addCheckIn(new LatLng(lat, lng), MainActivity.mProviderdb, MainActivity.mOverlaydb);
                     }
                 } else {
-                    
+
                 }
 
                 break;

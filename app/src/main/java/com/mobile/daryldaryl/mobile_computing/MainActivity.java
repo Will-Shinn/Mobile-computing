@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity
         fab4.setOnClickListener(this);
         fab5.setOnClickListener(this);
 
-        String userId = "001";
         list = new ArrayList<>();
 
         relativeLayout = (RelativeLayout) findViewById(R.id.map_layout);
@@ -441,7 +440,7 @@ public class MainActivity extends AppCompatActivity
                         if (location != null) {
                             list.add(new LatLng(location.getLatitude(), location.getLongitude()));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
-                            addHeatMap();
+//                            addHeatMap();
                         }
                     }
                 });
@@ -519,6 +518,7 @@ public class MainActivity extends AppCompatActivity
 
         if (checkPlayServices()) {
             // Start IntentService to register this application with GCM.
+            Log.i("MainActivity", "success");
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
@@ -678,7 +678,8 @@ public class MainActivity extends AppCompatActivity
                 getNearbyPlace();
                 break;
             case R.id.fab4:
-
+                switch_heatmap();
+                break;
             case R.id.fab5:
                 if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
@@ -689,6 +690,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 makemessage();
+                break;
 
 
         }
