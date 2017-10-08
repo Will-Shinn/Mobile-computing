@@ -71,6 +71,7 @@ public class MyCheckInActivity extends AppCompatActivity {
                             checkin.setLat(jsonObject.getDouble("lat"));
                             checkin.setLng(jsonObject.getDouble("lng"));
                             checkin.setTime(jsonObject.getLong("time"));
+                            checkin.setReceipt(jsonObject.getString("receipt"));
                             mData.add(checkin);
                             continue;
                         }
@@ -81,6 +82,7 @@ public class MyCheckInActivity extends AppCompatActivity {
                         checkin.setLat(jsonObject.getDouble("lat"));
                         checkin.setLng(jsonObject.getDouble("lng"));
                         checkin.setTime(jsonObject.getLong("time"));
+                        checkin.setReceipt(jsonObject.getString("receipt"));
                         mData.add(checkin);
                     }
                     mAdapter.notifyDataSetChanged();

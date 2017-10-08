@@ -103,6 +103,7 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     intent.putExtra("chechInLat", checkin.getLat());
                     intent.putExtra("chechInLng", checkin.getLng());
                     intent.putExtra("chechInTime", Utils.parseRecentTime(checkin.getTime()));
+                    intent.putExtra("receipt", checkin.getReceipt());
                     activity.startActivity(intent);
 
                 }
@@ -124,6 +125,7 @@ public class CheckInAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     intent.putExtra("chechInLat", checkin.getLat());
                     intent.putExtra("chechInLng", checkin.getLng());
                     intent.putExtra("chechInTime", Utils.parseRecentTime(checkin.getTime()));
+                    intent.putExtra("receipt", checkin.getReceipt());
                     activity.startActivity(intent);
 
                 }

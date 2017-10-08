@@ -12,11 +12,20 @@ public class Checkin {
     private double lat;
     private double lng;
     private long time;
+    private String receipt;
     private String vicinity;
 
 
     public Checkin() {
 
+    }
+
+    public String getReceipt() {
+        return receipt;
+    }
+
+    public void setReceipt(String receipt) {
+        this.receipt = receipt;
     }
 
     public String getUserId() {

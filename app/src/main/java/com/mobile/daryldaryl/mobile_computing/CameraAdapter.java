@@ -48,7 +48,7 @@ import java.util.Map;
  */
 
 
-public class PlaceAdapter extends BasicAdapter {
+public class CameraAdapter extends BasicAdapter {
     private final int VIEW_TYPE_PLACE = 0;
     private final int VIEW_TYPE_CURRENT = 1;
     private Context context;
@@ -56,10 +56,10 @@ public class PlaceAdapter extends BasicAdapter {
     private List<Place> mData = null;
     private FusedLocationProviderClient mFusedLocationClient;
     public RequestQueue queue;
-    private Activity activity;
+    private MainActivity activity;
 
 
-    public PlaceAdapter(List mData, Dialog dialog, Activity activity) {
+    public CameraAdapter(List mData, Dialog dialog, MainActivity activity) {
         this.dialog = dialog;
         this.activity = activity;
         this.context = activity.getApplicationContext();
@@ -100,51 +100,12 @@ public class PlaceAdapter extends BasicAdapter {
             placeViewHolder.placeName.setText(place.getName());
             placeViewHolder.placeAddress.setText(place.getVicinity());
 
-            final JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("name", place.getName());
-                jsonObject.put("lat", place.getLat());
-                jsonObject.put("lng", place.getLng());
-                jsonObject.put("vicinity", place.getVicinity());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     dialog.dismiss();
-                    String url = ServerInfo.url + "/check_in";
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.i("LoginActivity", response.toString());
-                            Toast.makeText(activity, "check-in succeed", Toast.LENGTH_SHORT).show();
-                        }
-                    }, new Response.ErrorListener() {
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // TODO Auto-generated method stub
-                            Toast.makeText(activity, "Network issues, please try later.", Toast.LENGTH_LONG).show();
-                        }
-                    }) {
-                        @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            SharedPreferences sharedPref = activity.getApplicationContext().getSharedPreferences(
-                                    "Mobile", Context.MODE_PRIVATE);
-                            String access_token = sharedPref.getString("access_token", "");
-
-                            Map<String, String> headers = new HashMap<>();
-                            headers.put("Accept", "application/json");
-                            headers.put("Authorization", access_token);
-
-                            return headers;
-                        }
-                    };
-                    queue.add(jsonObjectRequest);
-
-//                    Toast.makeText(view.getContext(), place.getName(), Toast.LENGTH_SHORT).show();
+                    activity.setPlace(new Place(place.getName(), place.getLat(), place.getLng(), place.getVicinity()));
+                    activity.takePhoto();
 
 
                 }

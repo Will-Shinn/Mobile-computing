@@ -117,9 +117,9 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView recyclerview;
     private LinearLayoutManager mLayoutManager;
     private List<Place> mData = null;
-    private PlaceAdapter mAdapter;
     private Uri mUriPhotoTaken;
 
+    private Place pic_place;
     // File of the photo taken with camera
     private File mFilePhotoTaken;
     // The image selected to detect.
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity
 
     FloatingActionButton fab;
     Dialog dialog;
+    private BasicAdapter mAdapter;
 
     private String displayName;
     private String city;
@@ -221,11 +222,12 @@ public class MainActivity extends AppCompatActivity
         recyclerview = dialog.findViewById(R.id.grid_recycler);
         mLayoutManager = new LinearLayoutManager(this, null, LinearLayoutManager.VERTICAL, 0);
         recyclerview.setLayoutManager(mLayoutManager);
-        recyclerview.setAdapter(mAdapter = new PlaceAdapter(mData, dialog, MainActivity.this, userId));
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(MainActivity.this,
                 mLayoutManager.getOrientation());
         recyclerview.addItemDecoration(dividerItemDecoration);
-        mAdapter.notifyDataSetChanged();
+//        recyclerview.setAdapter(mAdapter = new PlaceAdapter(mData, dialog, MainActivity.this, userId));
+//        mAdapter.notifyDataSetChanged();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
@@ -313,43 +315,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void animateFAB() {
 
-        if (isFabOpen) {
+    public void setPlace(Place pic_place) {
+        this.pic_place = pic_place;
+    }
 
-            fab.startAnimation(rotate_backward);
-            fab1.startAnimation(fab_close);
-            fab2.startAnimation(fab_close);
-            fab3.startAnimation(fab_close);
-            fab4.startAnimation(fab_close);
-            fab5.startAnimation(fab_close);
-
-            fab1.setClickable(false);
-            fab2.setClickable(false);
-            fab3.setClickable(false);
-            fab4.setClickable(false);
-            fab5.setClickable(false);
-
-            isFabOpen = false;
-            Log.d("Raj", "close");
-
-        } else {
-
-            fab.startAnimation(rotate_forward);
-            fab1.startAnimation(fab_open);
-            fab2.startAnimation(fab_open);
-            fab3.startAnimation(fab_open);
-            fab4.startAnimation(fab_open);
-            fab5.startAnimation(fab_open);
-            fab1.setClickable(true);
-            fab2.setClickable(true);
-            fab3.setClickable(true);
-            fab4.setClickable(true);
-            fab5.setClickable(true);
-            isFabOpen = true;
-            Log.d("abcdefg", "open hello");
-
-        }
+    public Place getPlace() {
+        return pic_place;
     }
 
     @Override
@@ -364,7 +336,10 @@ public class MainActivity extends AppCompatActivity
                     mImageUri = Uri.fromFile(mFilePhotoTaken);
 
                     Intent intent = new Intent(MainActivity.this, RecognitionActivity.class);
-
+                    intent.putExtra("name", getPlace().getName());
+                    intent.putExtra("lat", getPlace().getLat());
+                    intent.putExtra("lng", getPlace().getLng());
+                    intent.putExtra("vicinity", getPlace().getVicinity());
                     intent.putExtra("BitmapUri", mImageUri);
 
                     startActivity(intent);
@@ -380,7 +355,10 @@ public class MainActivity extends AppCompatActivity
                         imageUri = data.getData();
                     }
                     Intent intent = new Intent(MainActivity.this, RecognitionActivity.class);
-
+                    intent.putExtra("name", getPlace().getName());
+                    intent.putExtra("lat", getPlace().getLat());
+                    intent.putExtra("lng", getPlace().getLng());
+                    intent.putExtra("vicinity", getPlace().getVicinity());
                     intent.putExtra("BitmapUri", imageUri);
 
                     startActivity(intent);
@@ -688,68 +666,16 @@ public class MainActivity extends AppCompatActivity
                 animateFAB();
                 break;
             case R.id.fab1:
-                if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{
-                                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                    android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                            101);
-                    return;
-                }
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-
-                                if (location != null) {
-                                    currentLocation = location;
-
-                                    mData.clear();
-                                    mData.add(null);
-                                    dialog.show();
-
-                                    String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude() + "&radius=300&key=AIzaSyAeMJIpr7CVFQ7hPXnlr-p80bEhNcg5VIs";
-                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
-
-                                        @Override
-                                        public void onResponse(JSONObject response) {
-                                            try {
-                                                JSONArray jsonArray = (JSONArray) response.get("results");
-                                                for (int i = 0; i < jsonArray.length(); i++) {
-                                                    JSONObject place = (JSONObject) jsonArray.get(i);
-                                                    JSONObject geo = (JSONObject) place.get("geometry");
-                                                    mData.add(new Place(place.get("name").toString(),
-                                                            Double.parseDouble(((JSONObject) geo.get("location")).get("lat").toString()),
-                                                            Double.parseDouble(((JSONObject) geo.get("location")).get("lng").toString()),
-                                                            place.get("vicinity").toString()));
-                                                }
-                                                mAdapter.notifyDataSetChanged();
-                                                dialog.show();
-
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-                                    }, new Response.ErrorListener() {
-
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            // TODO Auto-generated method stub
-                                            Log.i("map", error.toString());
-                                        }
-                                    });
-                                    queue.add(jsonObjectRequest);
-                                }
-                            }
-                        });
+                recyclerview.setAdapter(mAdapter = new PlaceAdapter(mData, dialog, this));
+                getNearbyPlace();
                 break;
             case R.id.fab2:
-                takePhoto();
+                recyclerview.setAdapter(mAdapter = new CameraAdapter(mData, dialog, this));
+                getNearbyPlace();
                 break;
             case R.id.fab3:
-                selectImageInAlbum();
+                recyclerview.setAdapter(mAdapter = new PhotoAdapter(mData, dialog, this));
+                getNearbyPlace();
                 break;
             case R.id.fab4:
 
@@ -769,6 +695,66 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void getNearbyPlace() {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    101);
+            return;
+        }
+
+
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+
+                        if (location != null) {
+                            currentLocation = location;
+
+                            mData.clear();
+                            mData.add(null);
+                            dialog.show();
+
+                            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude() + "&radius=300&key=AIzaSyAeMJIpr7CVFQ7hPXnlr-p80bEhNcg5VIs";
+                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
+                                        JSONArray jsonArray = (JSONArray) response.get("results");
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            JSONObject place = (JSONObject) jsonArray.get(i);
+                                            JSONObject geo = (JSONObject) place.get("geometry");
+                                            mData.add(new Place(place.get("name").toString(),
+                                                    Double.parseDouble(((JSONObject) geo.get("location")).get("lat").toString()),
+                                                    Double.parseDouble(((JSONObject) geo.get("location")).get("lng").toString()),
+                                                    place.get("vicinity").toString()));
+                                        }
+                                        mAdapter.notifyDataSetChanged();
+                                        dialog.show();
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            }, new Response.ErrorListener() {
+
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    // TODO Auto-generated method stub
+                                    Log.i("map", error.toString());
+                                }
+                            });
+                            queue.add(jsonObjectRequest);
+                        }
+                    }
+                });
+    }
 
     @Override
     protected void onStart() {
@@ -794,5 +780,43 @@ public class MainActivity extends AppCompatActivity
         isVisible = false;
     }
 
+    public void animateFAB() {
+
+        if (isFabOpen) {
+
+            fab.startAnimation(rotate_backward);
+            fab1.startAnimation(fab_close);
+            fab2.startAnimation(fab_close);
+            fab3.startAnimation(fab_close);
+            fab4.startAnimation(fab_close);
+            fab5.startAnimation(fab_close);
+
+            fab1.setClickable(false);
+            fab2.setClickable(false);
+            fab3.setClickable(false);
+            fab4.setClickable(false);
+            fab5.setClickable(false);
+
+            isFabOpen = false;
+            Log.d("Raj", "close");
+
+        } else {
+
+            fab.startAnimation(rotate_forward);
+            fab1.startAnimation(fab_open);
+            fab2.startAnimation(fab_open);
+            fab3.startAnimation(fab_open);
+            fab4.startAnimation(fab_open);
+            fab5.startAnimation(fab_open);
+            fab1.setClickable(true);
+            fab2.setClickable(true);
+            fab3.setClickable(true);
+            fab4.setClickable(true);
+            fab5.setClickable(true);
+            isFabOpen = true;
+            Log.d("abcdefg", "open hello");
+
+        }
+    }
 
 }
